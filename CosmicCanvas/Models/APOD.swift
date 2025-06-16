@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct Apod: Codable, Identifiable {
+struct APOD: Codable, Identifiable {
     let date: String
     let explanation: String
     let hdurl:String?
