@@ -1,4 +1,4 @@
-# Cosmic Canvas
+# Cosmic Daily
 
 An iOS app that brings NASA's Astronomy Picture of the Day to your iPhone and iPad. Discover stunning images of our universe with detailed explanations from NASA astronomers.
 
