@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CosmicDaily - NASA's Daily Space Photos</title>
+    <meta name="description" content="Discover the cosmos daily with stunning NASA astronomy photos. Get expert explanations and explore the universe from your iPhone or iPad.">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            line-height: 1.6;
+            color: #1a1a1a;
+            background-color: #000;
+            overflow-x: hidden;
+        }
+
+        /* Stars background */
+        .stars {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            background: transparent;
+        }
+
+        .star {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: white;
+            border-radius: 50%;
+            opacity: 0;
+            animation: twinkle 5s infinite;
+        }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 0; }
+            50% { opacity: 1; }
+        }
+
+        /* Header */
+        header {
+            background: rgba(0, 0, 0, 0.9);
+            backdrop-filter: blur(10px);
+            padding: 20px 0;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        nav {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+            color: white;
+        }
+
+        .logo img {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+        }
+
+        .logo h1 {
+            font-size: 24px;
+            font-weight: 600;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 30px;
+            list-style: none;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: rgba(255, 255, 255, 0.8);
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        .nav-links a:hover {
+            color: white;
+        }
+
+        /* Hero Section */
+        .hero {
+            margin-top: 80px;
+            padding: 100px 20px;
+            text-align: center;
+            background: linear-gradient(180deg, #000 0%, #0a0a2e 50%, #000 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cosmic-gradient {
+            position: absolute;
+            width: 150%;
+            height: 150%;
+            top: -25%;
+            left: -25%;
+            background: radial-gradient(circle at 30% 40%, rgba(138, 43, 226, 0.3), transparent 50%),
+                        radial-gradient(circle at 70% 60%, rgba(30, 144, 255, 0.3), transparent 50%);
+            animation: float 20s infinite ease-in-out;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: rotate(0deg) scale(1); }
+            50% { transform: rotate(180deg) scale(1.1); }
+        }
+
+        .hero-content {
+            max-width: 800px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+
+        .app-icon-large {
+            width: 150px;
+            height: 150px;
+            margin: 0 auto 40px;
+            border-radius: 35px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            animation: hover 3s infinite ease-in-out;
+        }
+
+        @keyframes hover {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .hero h2 {
+            font-size: 56px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            color: white;
+            text-shadow: 0 2px 20px rgba(0, 0, 0, 0.5);
+        }
+
+        .hero .tagline {
+            font-size: 24px;
+            color: rgba(255, 255, 255, 0.9);
+            margin-bottom: 20px;
+            font-weight: 300;
+        }
+
+        .hero .description {
+            font-size: 18px;
+            color: rgba(255, 255, 255, 0.7);
+            margin-bottom: 40px;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .download-badge {
+            display: inline-block;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .download-badge:hover {
+            transform: scale(1.05);
+            filter: brightness(1.1);
+        }
+
+        .nasa-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 20px;
+            padding: 8px 16px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 14px;
+        }
+
+        /* Features Section */
+        .features {
+            padding: 100px 20px;
+            background: #000;
+            position: relative;
+        }
+
+        .features::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+        }
+
+        .features h2 {
+            text-align: center;
+            font-size: 48px;
+            margin-bottom: 60px;
+            color: white;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 40px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .feature-card {
+            text-align: center;
+            padding: 40px 30px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s;
+            backdrop-filter: blur(10px);
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            background: rgba(255, 255, 255, 0.08);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .feature-icon {
+            font-size: 48px;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .feature-card h3 {
+            font-size: 24px;
+            margin-bottom: 15px;
+            color: white;
+        }
+
+        .feature-card p {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 16px;
+        }
+
+        /* Screenshots Section */
+        .screenshots {
+            background: linear-gradient(180deg, #000 0%, #0a0a2e 100%);
+            padding: 100px 20px;
+            text-align: center;
+            position: relative;
+        }
+
+        .screenshots h2 {
+            font-size: 48px;
+            margin-bottom: 60px;
+            color: white;
+        }
+
+        .device-showcase {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 60px;
+            flex-wrap: wrap;
+        }
+
+        .device {
+            position: relative;
+            filter: drop-shadow(0 20px 40px rgba(0, 0, 0, 0.5));
+        }
+
+        .iphone {
+            width: 300px;
+            height: 600px;
+            background: #1a1a1a;
+            border-radius: 40px;
+            padding: 10px;
+            position: relative;
+        }
+
+        .iphone::before {
+            content: '';
+            position: absolute;
+            top: 25px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 150px;
+            height: 25px;
+            background: #000;
+            border-radius: 15px;
+        }
+
+        .ipad {
+            width: 500px;
+            height: 700px;
+            background: #1a1a1a;
+            border-radius: 30px;
+            padding: 20px;
+        }
+
+        .screen {
+            width: 100%;
+            height: 100%;
+            background: #000;
+            border-radius: 30px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .iphone .screen {
+            border-radius: 30px;
+        }
+
+        .ipad .screen {
+            border-radius: 20px;
+            display: flex;
+        }
+
+        .screenshot-content {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .ipad .screenshot-content {
+            flex-direction: row;
+            gap: 20px;
+        }
+
+        .fake-image {
+            width: 80%;
+            height: 200px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            margin-bottom: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .ipad .fake-image {
+            width: 50%;
+            height: 80%;
+            margin-bottom: 0;
+        }
+
+        .fake-image::after {
+            content: '🌌';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 60px;
+        }
+
+        .fake-text {
+            width: 80%;
+        }
+
+        .ipad .fake-text {
+            width: 40%;
+        }
+
+        .text-line {
+            height: 10px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 5px;
+            margin-bottom: 10px;
+        }
+
+        .text-line:nth-child(2) { width: 90%; }
+        .text-line:nth-child(3) { width: 75%; }
+        .text-line:nth-child(4) { width: 85%; }
+
+        /* Footer */
+        footer {
+            background: #000;
+            color: white;
+            padding: 60px 20px 40px;
+            text-align: center;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            margin-bottom: 30px;
+        }
+
+        .footer-links a {
+            color: rgba(255, 255, 255, 0.7);
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .footer-links a:hover {
+            color: white;
+        }
+
+        .footer-bottom {
+            padding-top: 30px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero h2 {
+                font-size: 36px;
+            }
+
+            .hero .tagline {
+                font-size: 20px;
+            }
+
+            .hero .description {
+                font-size: 16px;
+            }
+
+            .features h2,
+            .screenshots h2 {
+                font-size: 32px;
+            }
+
+            .device-showcase {
+                gap: 40px;
+            }
+
+            .iphone {
+                width: 250px;
+                height: 500px;
+            }
+
+            .ipad {
+                width: 350px;
+                height: 500px;
+            }
+
+            .nav-links {
+                gap: 20px;
+                font-size: 14px;
+            }
+
+            .footer-links {
+                flex-direction: column;
+                gap: 20px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Stars Background -->
+    <div class="stars" id="stars"></div>
+
+    <!-- Header -->
+    <header>
+        <nav>
+            <a href="#" class="logo">
+                <img src="cosmicdaily-icon.png" alt="CosmicDaily">
+                <h1>CosmicDaily</h1>
+            </a>
+            <ul class="nav-links">
+                <li><a href="#features">Features</a></li>
+                <li><a href="#screenshots">Screenshots</a></li>
+                <li><a href="privacy.html">Privacy</a></li>
+                <li><a href="support.html">Support</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="cosmic-gradient"></div>
+        <div class="hero-content">
+            <img src="cosmicdaily-icon.png" alt="CosmicDaily Icon" class="app-icon-large">
+            <h2>CosmicDaily</h2>
+            <p class="tagline">Your Daily Window to the Universe</p>
+            <p class="description">Discover breathtaking space imagery from NASA's Astronomy Picture of the Day. Get expert explanations and explore the cosmos from your iPhone or iPad.</p>
+            
+            <a href="#" class="download-badge">
+                <img src="https://toolbox.marketingtools.apple.com/api/v2/badges/download-on-the-app-store/black/en-us"
+                    alt="Download on the App Store"
+                    style="height: 60px;">
+            </a>
+            
+            <div class="nasa-badge">
+                <i class="fas fa-satellite"></i>
+                Powered by NASA APOD API
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features" id="features">
+        <h2>Features That Shine</h2>
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon"><i class="fas fa-image"></i></div>
+                <h3>Daily Space Photos</h3>
+                <p>New stunning astronomy images every day from NASA's extensive collection.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon"><i class="fas fa-user-astronaut"></i></div>
+                <h3>Expert Insights</h3>
+                <p>Professional astronomer explanations help you understand what you're seeing.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon"><i class="fas fa-moon"></i></div>
+                <h3>Dark Mode</h3>
+                <p>Beautiful dark interface perfect for nighttime stargazing sessions.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon"><i class="fas fa-wifi-slash"></i></div>
+                <h3>Offline Viewing</h3>
+                <p>Smart caching lets you enjoy space photos even without internet.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon"><i class="fas fa-tablet-alt"></i></div>
+                <h3>iPad Optimized</h3>
+                <p>Split-view design shows images and details side by side on iPad.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon"><i class="fas fa-search-plus"></i></div>
+                <h3>HD Zoom</h3>
+                <p>Pinch to zoom and explore high-resolution space imagery in detail.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Screenshots Section -->
+    <section class="screenshots" id="screenshots">
+        <h2>Experience the Cosmos</h2>
+        <div class="device-showcase">
+            <div class="device iphone">
+                <div class="screen">
+                    <div class="screenshot-content">
+                        <div class="fake-image"></div>
+                        <div class="fake-text">
+                            <div class="text-line"></div>
+                            <div class="text-line"></div>
+                            <div class="text-line"></div>
+                            <div class="text-line"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="device ipad">
+                <div class="screen">
+                    <div class="screenshot-content">
+                        <div class="fake-image"></div>
+                        <div class="fake-text">
+                            <div class="text-line" style="height: 20px; margin-bottom: 20px;"></div>
+                            <div class="text-line"></div>
+                            <div class="text-line"></div>
+                            <div class="text-line"></div>
+                            <div class="text-line"></div>
+                            <div class="text-line"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-links">
+                <a href="privacy.html">Privacy Policy</a>
+                <a href="support.html">Support</a>
+                <a href="https://github.com/emreargana/CosmicDaily">GitHub</a>
+                <a href="mailto:emreargana@icloud.com">Contact</a>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 CosmicDaily. Made with ❤️ by Emre Argana</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Create stars
+        const starsContainer = document.getElementById('stars');
+        const numberOfStars = 200;
+
+        for (let i = 0; i < numberOfStars; i++) {
+            const star = document.createElement('div');
+            star.className = 'star';
+            star.style.left = Math.random() * 100 + '%';
+            star.style.top = Math.random() * 100 + '%';
+            star.style.animationDelay = Math.random() * 5 + 's';
+            star.style.animationDuration = (Math.random() * 3 + 2) + 's';
+            starsContainer.appendChild(star);
+        }
+
+        // Smooth scrolling
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>
