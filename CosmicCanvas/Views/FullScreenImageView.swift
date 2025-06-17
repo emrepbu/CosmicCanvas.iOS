@@ -15,6 +15,7 @@ struct FullScreenImageView: View {
     @State private var offset: CGSize = .zero
     @State private var lastOffset: CGSize = .zero
     @State private var showControls = true
+    @Environment(\.dismiss) private var dismiss
     
     var body: some View {
         NavigationView {
@@ -29,32 +30,8 @@ struct FullScreenImageView: View {
                                 .aspectRatio(contentMode: .fit)
                                 .scaleEffect(scale)
                                 .offset(offset)
-                                .gesture(
-                                    MagnificationGesture()
-                                        .onChanged { value in
-                                            let delta = value / lastScale
-                                            lastScale = value
-                                            scale *= delta
-                                        }
-                                        .onEnded { _ in
-                                            lastScale = 1.0
-                                            withAnimation(.spring()) {
-                                                scale = min(max(scale, 1), 4)
-                                            }
-                                        }
-                                )
-                                .gesture(
-                                    DragGesture()
-                                        .onChanged { value in
-                                            offset = CGSize(
-                                                width: lastOffset.width + value.translation.width,
-                                                height: lastOffset.height + value.translation.height
-                                            )
-                                        }
-                                        .onEnded { _ in
-                                            lastOffset = offset
-                                        }
-                                )
+                                .gesture(magnificationGesture)
+                                .gesture(dragGesture)
                                 .onTapGesture(count: 2) {
                                     withAnimation(.spring()) {
                                         scale = scale > 1 ? 1 : 2
@@ -189,9 +166,8 @@ struct FullScreenImageView: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    
                     Button(action: {
-                        isPresented = false
+                        dismiss()
                     }) {
                         Image(systemName: "xmark")
                             .font(.system(size: 16, weight: .medium))
@@ -201,5 +177,34 @@ struct FullScreenImageView: View {
             }
         }
         .preferredColorScheme(.dark)
+    }
+    
+    // Gesture'ları computed property olarak tanımlayalım
+    private var magnificationGesture: some Gesture {
+        MagnificationGesture()
+            .onChanged { value in
+                let delta = value / lastScale
+                lastScale = value
+                scale *= delta
+            }
+            .onEnded { _ in
+                lastScale = 1.0
+                withAnimation(.spring()) {
+                    scale = min(max(scale, 1), 4)
+                }
+            }
+    }
+    
+    private var dragGesture: some Gesture {
+        DragGesture()
+            .onChanged { value in
+                offset = CGSize(
+                    width: lastOffset.width + value.translation.width,
+                    height: lastOffset.height + value.translation.height
+                )
+            }
+            .onEnded { _ in
+                lastOffset = offset
+            }
     }
 }

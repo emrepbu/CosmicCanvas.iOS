@@ -79,10 +79,11 @@ struct ContentView: View {
         .task {
             await viewModel.fetchAPOD()
         }
-        .fullScreenCover(isPresented: $showFullScreen) {
+        .sheet(isPresented: $showFullScreen) {
             if let apod = viewModel.apod, apod.mediaType == "image" {
                 let imageURL = apod.hdurl ?? apod.url
                 FullScreenImageView(imageURL: imageURL, isPresented: $showFullScreen)
+                    .interactiveDismissDisabled(false)
             }
         }
         .sheet(isPresented: $showingSettings) {
