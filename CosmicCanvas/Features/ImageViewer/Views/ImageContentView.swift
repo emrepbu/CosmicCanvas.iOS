@@ -1,6 +1,6 @@
 //
 //  ImageContentView.swift
-//  CosmicCanvas
+//  CosmicDaily
 //
 //  Created by emre argana on 17.06.2025.
 //

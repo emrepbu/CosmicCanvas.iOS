@@ -1,6 +1,6 @@
 //
 //  ContentView.swift
-//  CosmicCanvas
+//  CosmicDaily
 //
 //  Created by emre argana on 10.06.2025.
 //
@@ -61,7 +61,7 @@ struct ContentView: View {
                         }
                     }
                     .listStyle(SidebarListStyle())
-                    .navigationTitle("Cosmic Canvas")
+                    .navigationTitle("Cosmic Daily")
                     .toolbar {
                         ToolbarItem(placement: .navigationBarLeading) {
                             Button(action: {
@@ -127,7 +127,7 @@ struct ContentView: View {
                             .padding()
                         }
                     }
-                    .navigationTitle("Cosmic Canvas")
+                    .navigationTitle("Cosmic Daily")
                     .navigationBarTitleDisplayMode(.large)
                     .toolbar {
                         ToolbarItem(placement: .navigationBarLeading) {

@@ -1,6 +1,6 @@
 //
 //  APOD.swift
-//  CosmicCanvas
+//  CosmicDaily
 //
 //  Created by emre argana on 10.06.2025.
 //

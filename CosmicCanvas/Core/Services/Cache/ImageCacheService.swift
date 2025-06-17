@@ -1,6 +1,6 @@
 //
 //  ImageCacheService.swift
-//  CosmicCanvas
+//  CosmicDaily
 //
 //  Created by emre argana on 17.06.2025.
 //
@@ -13,7 +13,7 @@ class ImageCacheService {
     private let cache = NSCache<NSString, NSData>()
     private let fileManager = FileManager.default
     private let documentsDirectory: URL?
-    private let cacheQueue = DispatchQueue(label: "com.cosmiccanvas.imagecache", attributes: .concurrent)
+    private let cacheQueue = DispatchQueue(label: "com.cosmicdaily.imagecache", attributes: .concurrent)
     
     private init() {
         cache.countLimit = 50 // Maximum 50 images in memory

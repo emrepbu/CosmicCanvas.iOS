@@ -1,6 +1,6 @@
 //
 //  SettingsView.swift
-//  CosmicCanvas
+//  CosmicDaily
 //
 //  Created by emre argana on 17.06.2025.
 //
@@ -133,7 +133,7 @@ struct SettingsView: View {
                     Text("About")
                 } footer: {
                     VStack(alignment: .leading, spacing: 8) {
-                        Text("Cosmic Canvas")
+                        Text("Cosmic Daily")
                             .font(.headline)
                         Text("Discover the cosmos! Each day NASA features a different image or photograph of our fascinating universe.")
                             .font(.caption)

@@ -16,9 +16,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "014734D92DF89A78003D6406"
-               BuildableName = "CosmicCanvas.app"
-               BlueprintName = "CosmicCanvas"
-               ReferencedContainer = "container:CosmicCanvas.xcodeproj">
+               BuildableName = "CosmicDaily.app"
+               BlueprintName = "CosmicDaily"
+               ReferencedContainer = "container:CosmicDaily.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -45,9 +45,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "014734D92DF89A78003D6406"
-            BuildableName = "CosmicCanvas.app"
-            BlueprintName = "CosmicCanvas"
-            ReferencedContainer = "container:CosmicCanvas.xcodeproj">
+            BuildableName = "CosmicDaily.app"
+            BlueprintName = "CosmicDaily"
+            ReferencedContainer = "container:CosmicDaily.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </LaunchAction>
@@ -62,9 +62,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "014734D92DF89A78003D6406"
-            BuildableName = "CosmicCanvas.app"
-            BlueprintName = "CosmicCanvas"
-            ReferencedContainer = "container:CosmicCanvas.xcodeproj">
+            BuildableName = "CosmicDaily.app"
+            BlueprintName = "CosmicDaily"
+            ReferencedContainer = "container:CosmicDaily.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>
