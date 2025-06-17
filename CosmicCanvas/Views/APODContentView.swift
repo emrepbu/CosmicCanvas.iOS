@@ -10,7 +10,6 @@ import SwiftUI
 struct APODContentView: View {
     let apod: APOD
     @Binding var showFullScreen: Bool
-    @Binding var selectedImage: String
     @State private var imageLoaded = false
     
     var body: some View {
@@ -47,10 +46,10 @@ struct APODContentView: View {
             
             // Media Content
             if apod.mediaType == "image" {
+                let imageURL = apod.hdurl ?? apod.url
                 ImageContentView(
-                    imageURL: apod.hdurl ?? apod.url,
+                    imageURL: imageURL,
                     showFullScreen: $showFullScreen,
-                    selectedImage: $selectedImage,
                     imageLoaded: $imageLoaded
                 )
             } else if apod.mediaType == "video", let videoURL = URL(string: apod.url) {

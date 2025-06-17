@@ -25,7 +25,7 @@ class APODService {
     
     func fetchTodayAPOD() async throws -> APOD {
         // Check cache first
-        if let cachedAPOD = cache.loadFromCache() {
+        if let cachedAPOD = await cache.loadFromCacheAsync() {
             print("Loaded APOD from cache")
             return cachedAPOD
         }

@@ -13,6 +13,7 @@ struct SettingsView: View {
     @State private var showingApiKeySaved = false
     @State private var showingClearCache = false
     @State private var showingClearCacheAlert = false
+    @State private var showApiKey = false
     @Environment(\.dismiss) private var dismiss
     
     // App Info
@@ -22,52 +23,61 @@ struct SettingsView: View {
     var body: some View {
         NavigationView {
             Form {
-                // API Key Section
+                // API Configuration Section
                 Section {
-                    VStack(alignment: .leading, spacing: 12) {
-                        Label("NASA API Key", systemImage: "key.fill")
-                            .font(.headline)
+                    // API Status
+                    HStack {
+                        Image(systemName: apiKey == "DEMO_KEY" ? "exclamationmark.circle.fill" : "checkmark.circle.fill")
+                            .foregroundColor(apiKey == "DEMO_KEY" ? .orange : .green)
                         
-                        Text("Enter your personal NASA API key for better performance")
-                            .font(.caption)
-                            .foregroundColor(.secondary)
-                        
-                        HStack {
-                            TextField("Enter API Key", text: $tempApiKey)
-                                .textFieldStyle(RoundedBorderTextFieldStyle())
-                                .autocapitalization(.none)
-                                .disableAutocorrection(true)
-                            
-                            Button(action: saveApiKey) {
-                                Text("Save")
-                                    .fontWeight(.medium)
-                            }
-                            .buttonStyle(.borderedProminent)
-                            .disabled(tempApiKey.isEmpty)
-                        }
-                        
-                        if apiKey != "DEMO_KEY" {
-                            HStack {
-                                Image(systemName: "checkmark.circle.fill")
-                                    .foregroundColor(.green)
-                                Text("Using custom API key")
-                                    .font(.caption)
-                                    .foregroundColor(.green)
-                            }
+                        VStack(alignment: .leading) {
+                            Text(apiKey == "DEMO_KEY" ? "Using Demo Key" : "Using Custom Key")
+                                .font(.headline)
+                            Text(apiKey == "DEMO_KEY" ? "Limited requests" : "Unlimited requests")
+                                .font(.caption)
+                                .foregroundColor(.secondary)
                         }
                     }
-                    .padding(.vertical, 8)
+                    
+                    // API Key Input
+                    HStack {
+                        if showApiKey {
+                            TextField("NASA API Key", text: $tempApiKey)
+                                .autocapitalization(.none)
+                                .disableAutocorrection(true)
+                        } else {
+                            SecureField("NASA API Key", text: $tempApiKey)
+                        }
+                        
+                        Button(action: { showApiKey.toggle() }) {
+                            Image(systemName: showApiKey ? "eye.slash" : "eye")
+                                .foregroundColor(.secondary)
+                        }
+                    }
+                    
+                    Button(action: saveApiKey) {
+                        HStack {
+                            Image(systemName: "square.and.arrow.down")
+                            Text("Save API Key")
+                        }
+                    }
+                    .disabled(tempApiKey.isEmpty || tempApiKey == apiKey)
                 } header: {
-                    Text("API Configuration")
+                    Label("API Configuration", systemImage: "key.fill")
                 } footer: {
-                    Text("Get your free API key at [api.nasa.gov](https://api.nasa.gov)")
+                    Text("Get your free API key from NASA [api.nasa.gov](https://api.nasa.gov) to enjoy unlimited access to space imagery.")
                 }
                 
-                // Cache Section
+                // Storage Section
                 Section {
-                    Button(action: {
-                        showingClearCacheAlert = true
-                    }) {
+                    HStack {
+                        Label("Cache Size", systemImage: "internaldrive")
+                        Spacer()
+                        Text(getCacheSize())
+                            .foregroundColor(.secondary)
+                    }
+                    
+                    Button(action: { showingClearCacheAlert = true }) {
                         HStack {
                             Label("Clear Cache", systemImage: "trash")
                                 .foregroundColor(.red)
@@ -78,23 +88,16 @@ struct SettingsView: View {
                             }
                         }
                     }
-                    
-                    HStack {
-                        Label("Cache Size", systemImage: "internaldrive")
-                        Spacer()
-                        Text(getCacheSize())
-                            .foregroundColor(.secondary)
-                    }
                 } header: {
                     Text("Storage")
                 } footer: {
-                    Text("Clear cached images and data to free up space")
+                    Text("Clear cached images and data to free up space.")
                 }
                 
                 // About Section
                 Section {
                     HStack {
-                        Label("Version", systemImage: "info.circle")
+                        Label("Version", systemImage: "app.badge")
                         Spacer()
                         Text("\(appVersion) (\(buildNumber))")
                             .foregroundColor(.secondary)

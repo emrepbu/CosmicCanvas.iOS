@@ -20,20 +20,36 @@ class APODViewModel: ObservableObject {
     private let imageCache = ImageCacheService.shared
     
     func fetchAPOD(forceRefresh: Bool = false) async {
-        // Show cached data immediately if available (without loading state)
-        if !forceRefresh, let cachedAPOD = await cache.loadFromCacheAsync() {
-            self.apod = cachedAPOD
-            print("Loaded APOD from cache instantly")
-            
-            // Check if we should refresh in background
-            if !cache.isCacheValid() {
-                await fetchFromNetwork()
-            }
-            return
+        // For initial load, show loading state
+        if apod == nil && !forceRefresh {
+            isLoading = true
         }
         
-        // If no cache or force refresh, show loading and fetch
-        isLoading = true
+        // Try to load from cache first
+        if !forceRefresh {
+            if let cachedAPOD = await cache.loadFromCacheAsync() {
+                // Update UI immediately with cached data
+                await MainActor.run {
+                    withAnimation(.easeIn(duration: 0.2)) {
+                        self.apod = cachedAPOD
+                        self.isLoading = false
+                    }
+                }
+                print("Loaded APOD from cache")
+                
+                // Check if we should refresh in background
+                if !cache.isCacheValid() {
+                    // Refresh in background without showing loading
+                    await fetchFromNetwork()
+                }
+                return
+            }
+        }
+        
+        // If no cache or force refresh, fetch from network
+        if forceRefresh {
+            isLoading = true
+        }
         error = nil
         await fetchFromNetwork()
         isLoading = false
@@ -54,9 +70,7 @@ class APODViewModel: ObservableObject {
             
             // Preload image to cache
             if fetchedAPOD.mediaType == "image" {
-                Task {
-                    await preloadImage(url: fetchedAPOD.hdurl ?? fetchedAPOD.url)
-                }
+                await preloadImage(url: fetchedAPOD.hdurl ?? fetchedAPOD.url)
             }
         } catch {
             self.error = "Veri alınamadı: \(error.localizedDescription)"
@@ -74,13 +88,14 @@ class APODViewModel: ObservableObject {
         
         // Check if already in cache
         if imageCache.loadImage(forKey: url) != nil {
+            print("Image already cached: \(url)")
             return
         }
         
         do {
             let (data, _) = try await URLSession.shared.data(from: imageURL)
             imageCache.saveImage(data: data, forKey: url)
-            print("Image preloaded to cache")
+            print("Image preloaded to cache: \(url)")
         } catch {
             print("Failed to preload image: \(error)")
         }
@@ -89,6 +104,6 @@ class APODViewModel: ObservableObject {
     func clearCache() {
         cache.clearCache()
         imageCache.clearCache()
-        print("Cache cleared")
+        print("All caches cleared")
     }
 }

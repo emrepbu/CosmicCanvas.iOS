@@ -46,9 +46,9 @@ class APODCacheService {
         }
     }
     
-    // Load APOD from cache - Fast async version
+    // Load APOD from cache - Optimized async version
     func loadFromCacheAsync() async -> APOD? {
-        // First check memory cache
+        // First check memory cache (super fast)
         if let cacheItem = memoryCache.object(forKey: cacheKey as NSString) {
             if Date().timeIntervalSince(cacheItem.timestamp) <= cacheValidityDuration {
                 return cacheItem.apod
@@ -57,64 +57,39 @@ class APODCacheService {
             }
         }
         
-        // Then check disk cache
-        return await Task.detached(priority: .userInitiated) {
-            guard let cachedData = UserDefaults.standard.data(forKey: self.cacheKey),
-                  let cacheTime = UserDefaults.standard.object(forKey: self.cacheTimeKey) as? Date else {
-                return nil
-            }
-            
-            // Check if cache is still valid
-            if Date().timeIntervalSince(cacheTime) > self.cacheValidityDuration {
-                await MainActor.run {
-                    self.clearCache()
+        // Then check disk cache asynchronously
+        return await withCheckedContinuation { continuation in
+            Task.detached(priority: .userInitiated) {
+                guard let cachedData = UserDefaults.standard.data(forKey: self.cacheKey),
+                      let cacheTime = UserDefaults.standard.object(forKey: self.cacheTimeKey) as? Date else {
+                    continuation.resume(returning: nil)
+                    return
                 }
-                return nil
-            }
-            
-            do {
-                let decoder = JSONDecoder()
-                let apod = try decoder.decode(APOD.self, from: cachedData)
                 
-                // Save to memory cache for next time
-                let cacheItem = CacheItem(apod: apod, timestamp: cacheTime)
-                self.memoryCache.setObject(cacheItem, forKey: self.cacheKey as NSString)
+                // Check if cache is still valid
+                if Date().timeIntervalSince(cacheTime) > self.cacheValidityDuration {
+                    // Clear expired cache
+                    Task { @MainActor in
+                        self.clearCache()
+                    }
+                    continuation.resume(returning: nil)
+                    return
+                }
                 
-                return apod
-            } catch {
-                print("Failed to decode cached APOD: \(error)")
-                return nil
+                do {
+                    let decoder = JSONDecoder()
+                    let apod = try decoder.decode(APOD.self, from: cachedData)
+                    
+                    // Save to memory cache for next time
+                    let cacheItem = CacheItem(apod: apod, timestamp: cacheTime)
+                    self.memoryCache.setObject(cacheItem, forKey: self.cacheKey as NSString)
+                    
+                    continuation.resume(returning: apod)
+                } catch {
+                    print("Failed to decode cached APOD: \(error)")
+                    continuation.resume(returning: nil)
+                }
             }
-        }.value
-    }
-    
-    // Load APOD from cache - Legacy sync version
-    func loadFromCache() -> APOD? {
-        // First check memory cache
-        if let cacheItem = memoryCache.object(forKey: cacheKey as NSString) {
-            if Date().timeIntervalSince(cacheItem.timestamp) <= cacheValidityDuration {
-                return cacheItem.apod
-            }
-        }
-        
-        guard let cachedData = UserDefaults.standard.data(forKey: cacheKey),
-              let cacheTime = UserDefaults.standard.object(forKey: cacheTimeKey) as? Date else {
-            return nil
-        }
-        
-        // Check if cache is still valid
-        if Date().timeIntervalSince(cacheTime) > cacheValidityDuration {
-            clearCache()
-            return nil
-        }
-        
-        do {
-            let decoder = JSONDecoder()
-            let apod = try decoder.decode(APOD.self, from: cachedData)
-            return apod
-        } catch {
-            print("Failed to decode cached APOD: \(error)")
-            return nil
         }
     }
     
@@ -126,7 +101,6 @@ class APODCacheService {
         // Clear UserDefaults
         UserDefaults.standard.removeObject(forKey: cacheKey)
         UserDefaults.standard.removeObject(forKey: cacheTimeKey)
-        UserDefaults.standard.synchronize()
         
         print("APOD cache cleared")
     }
@@ -146,6 +120,7 @@ class ImageCacheService {
     private let cache = NSCache<NSString, NSData>()
     private let fileManager = FileManager.default
     private let documentsDirectory: URL?
+    private let cacheQueue = DispatchQueue(label: "com.cosmiccanvas.imagecache", attributes: .concurrent)
     
     private init() {
         cache.countLimit = 50 // Maximum 50 images in memory
@@ -181,11 +156,13 @@ class ImageCacheService {
     
     func saveImage(data: Data, forKey key: String) {
         // Save to memory cache
-        cache.setObject(data as NSData, forKey: key as NSString)
+        cache.setObject(data as NSData, forKey: key as NSString, cost: data.count)
         
-        // Save to disk
-        if let fileURL = fileURL(for: key) {
-            try? data.write(to: fileURL)
+        // Save to disk asynchronously
+        cacheQueue.async(flags: .barrier) {
+            if let fileURL = self.fileURL(for: key) {
+                try? data.write(to: fileURL)
+            }
         }
     }
     
@@ -196,10 +173,16 @@ class ImageCacheService {
         }
         
         // Then check disk
-        if let fileURL = fileURL(for: key),
-           let data = try? Data(contentsOf: fileURL) {
+        var diskData: Data?
+        cacheQueue.sync {
+            if let fileURL = fileURL(for: key) {
+                diskData = try? Data(contentsOf: fileURL)
+            }
+        }
+        
+        if let data = diskData {
             // Add back to memory cache
-            cache.setObject(data as NSData, forKey: key as NSString)
+            cache.setObject(data as NSData, forKey: key as NSString, cost: data.count)
             return data
         }
         
@@ -211,16 +194,18 @@ class ImageCacheService {
         cache.removeAllObjects()
         
         // Clear disk cache
-        guard let documentsDirectory = documentsDirectory else { return }
-        let cacheDirectory = documentsDirectory.appendingPathComponent("CachedImages")
-        
-        // Remove all files in cache directory
-        if let files = try? fileManager.contentsOfDirectory(at: cacheDirectory,
-                                                            includingPropertiesForKeys: nil) {
-            for file in files {
-                try? fileManager.removeItem(at: file)
+        cacheQueue.async(flags: .barrier) {
+            guard let documentsDirectory = self.documentsDirectory else { return }
+            let cacheDirectory = documentsDirectory.appendingPathComponent("CachedImages")
+            
+            // Remove all files in cache directory
+            if let files = try? self.fileManager.contentsOfDirectory(at: cacheDirectory,
+                                                                includingPropertiesForKeys: nil) {
+                for file in files {
+                    try? self.fileManager.removeItem(at: file)
+                }
+                print("Image cache cleared - removed \(files.count) files")
             }
-            print("Image cache cleared - removed \(files.count) files")
         }
     }
 }

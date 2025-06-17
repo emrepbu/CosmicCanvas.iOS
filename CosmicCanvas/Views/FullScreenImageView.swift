@@ -21,14 +21,9 @@ struct FullScreenImageView: View {
             ZStack {
                 Color.black.ignoresSafeArea()
                 
-                if !imageURL.isEmpty, let url = URL(string: imageURL) {
-                    AsyncImage(url: url) { phase in
-                        switch phase {
-                        case .empty:
-                            ProgressView()
-                                .progressViewStyle(CircularProgressViewStyle(tint: .white))
-                                .scaleEffect(1.5)
-                        case .success(let image):
+                if !imageURL.isEmpty {
+                    if let url = URL(string: imageURL) {
+                        CachedAsyncImage(url: url) { image in
                             image
                                 .resizable()
                                 .aspectRatio(contentMode: .fit)
@@ -72,16 +67,22 @@ struct FullScreenImageView: View {
                                         showControls.toggle()
                                     }
                                 }
-                        case .failure(_):
-                            VStack(spacing: 20) {
-                                Image(systemName: "exclamationmark.triangle")
-                                    .font(.system(size: 50))
-                                    .foregroundColor(.white)
-                                Text("Failed to load image")
-                                    .foregroundColor(.white)
-                            }
-                        @unknown default:
-                            EmptyView()
+                        } placeholder: {
+                            ProgressView()
+                                .progressViewStyle(CircularProgressViewStyle(tint: .white))
+                                .scaleEffect(1.5)
+                        }
+                    } else {
+                        VStack(spacing: 20) {
+                            Image(systemName: "exclamationmark.triangle")
+                                .font(.system(size: 50))
+                                .foregroundColor(.yellow)
+                            Text("Invalid URL")
+                                .foregroundColor(.white)
+                            Text(imageURL)
+                                .font(.caption)
+                                .foregroundColor(.gray)
+                                .padding(.horizontal)
                         }
                     }
                 } else {
@@ -89,7 +90,7 @@ struct FullScreenImageView: View {
                         Image(systemName: "photo")
                             .font(.system(size: 50))
                             .foregroundColor(.white)
-                        Text("No image available")
+                        Text("No image URL provided")
                             .foregroundColor(.white)
                     }
                 }
@@ -97,24 +98,6 @@ struct FullScreenImageView: View {
                 // Control Overlay
                 if showControls {
                     VStack {
-                        // Top Controls
-                        HStack {
-                            Spacer()
-                            Button(action: {
-                                isPresented = false
-                            }) {
-                                Image(systemName: "xmark.circle.fill")
-                                    .font(.system(size: 30))
-                                    .foregroundColor(.white)
-                                    .background(
-                                        Circle()
-                                            .fill(Color.black.opacity(0.5))
-                                            .frame(width: 44, height: 44)
-                                    )
-                            }
-                            .padding()
-                        }
-                        
                         Spacer()
                         
                         // Bottom Controls
@@ -203,7 +186,20 @@ struct FullScreenImageView: View {
                     }
                 }
             }
-            .navigationBarHidden(true)
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    
+                    Button(action: {
+                        isPresented = false
+                    }) {
+                        Image(systemName: "xmark")
+                            .font(.system(size: 16, weight: .medium))
+                            .foregroundColor(.white)
+                    }
+                }
+            }
         }
+        .preferredColorScheme(.dark)
     }
 }

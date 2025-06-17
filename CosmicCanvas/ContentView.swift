@@ -10,7 +10,6 @@ import SwiftUI
 struct ContentView: View {
     @StateObject private var viewModel = APODViewModel()
     @State private var showFullScreen = false
-    @State private var selectedImage: String = ""
     @State private var showingSettings = false
     @Environment(\.colorScheme) var colorScheme
     
@@ -30,14 +29,18 @@ struct ContentView: View {
                 
                 ScrollView {
                     VStack(spacing: 20) {
-                        if viewModel.isLoading {
-                            LoadingView()
+                        if viewModel.isLoading && viewModel.apod == nil {
+                            // Show skeleton loader for initial load
+                            SkeletonLoadingView()
                         } else if let apod = viewModel.apod {
                             APODContentView(
                                 apod: apod,
-                                showFullScreen: $showFullScreen,
-                                selectedImage: $selectedImage
+                                showFullScreen: $showFullScreen
                             )
+                            .transition(.asymmetric(
+                                insertion: .opacity.combined(with: .scale(scale: 0.95)),
+                                removal: .opacity
+                            ))
                         } else if let error = viewModel.error {
                             ErrorView(error: error) {
                                 Task {
@@ -76,12 +79,18 @@ struct ContentView: View {
         .task {
             await viewModel.fetchAPOD()
         }
-        .sheet(isPresented: $showFullScreen) {
-            FullScreenImageView(imageURL: selectedImage, isPresented: $showFullScreen)
-                .edgesIgnoringSafeArea(.all)
+        .fullScreenCover(isPresented: $showFullScreen) {
+            if let apod = viewModel.apod, apod.mediaType == "image" {
+                let imageURL = apod.hdurl ?? apod.url
+                FullScreenImageView(imageURL: imageURL, isPresented: $showFullScreen)
+            }
         }
         .sheet(isPresented: $showingSettings) {
             SettingsView()
         }
     }
+}
+
+#Preview {
+    ContentView()
 }
