@@ -58,17 +58,9 @@ struct APODContentView: View {
                 UnsupportedMediaView()
             }
             
-            // Description Card
-            VStack(alignment: .leading, spacing: 12) {
-                Text("Today's Story")
-                    .font(.system(size: 20, weight: .semibold))
-                    .foregroundColor(.primary)
-                
-                Text(apod.explanation)
-                    .font(.system(size: 16))
-                    .foregroundColor(.secondary)
-                    .lineSpacing(6)
-                    .fixedSize(horizontal: false, vertical: true)
+            // Description Card with Translation
+            VStack {
+                TranslationView(originalText: apod.explanation)
             }
             .padding()
             .frame(maxWidth: .infinity, alignment: .leading)
