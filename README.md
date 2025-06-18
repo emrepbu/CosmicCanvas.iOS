@@ -26,9 +26,9 @@ An iOS app that brings NASA's Astronomy Picture of the Day to your iPhone and iP
 
 ## Requirements
 
-- iOS 26.0+
-- Xcode 26.0+
-- Swift 6.0+
+- iOS 17.6
+- Xcode 16.4
+- Swift 5.0
 
 ## Installation
 
