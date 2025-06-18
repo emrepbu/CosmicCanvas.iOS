@@ -31,7 +31,7 @@ struct APODContentView: View {
                     
                     if let copyright = apod.copyright {
                         Label(copyright, systemImage: "c.circle")
-                            .font(.system(size: 12))
+                            .font(.footnote)
                             .foregroundColor(.secondary)
                             .lineLimit(1)
                     }
