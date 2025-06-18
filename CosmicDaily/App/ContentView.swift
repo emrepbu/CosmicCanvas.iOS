@@ -12,147 +12,72 @@ struct ContentView: View {
     @State private var showFullScreen = false
     @State private var showingSettings = false
     @Environment(\.colorScheme) var colorScheme
-    @Environment(\.horizontalSizeClass) var horizontalSizeClass
     
     var body: some View {
         Group {
-            if horizontalSizeClass == .regular {
-                // iPad layout
-                NavigationView {
-                    // Sol Panel
-                    List {
-                        if let apod = viewModel.apod {
-                            VStack(alignment: .leading, spacing: 16) {
-                                // Başlık
-                                Text(apod.title)
-                                    .font(.system(size: 24, weight: .bold, design: .serif))
-                                    .foregroundColor(.primary)
-                                    .padding(.top)
-                                
-                                // Tarih ve Copyright
-                                VStack(alignment: .leading, spacing: 8) {
-                                    Label(formatDate(apod.date), systemImage: "calendar")
-                                        .font(.system(size: 14, weight: .medium))
-                                        .foregroundColor(.secondary)
-                                    
-                                    if let copyright = apod.copyright {
-                                        Label(copyright, systemImage: "c.circle")
-                                            .font(.system(size: 12))
-                                            .foregroundColor(.secondary)
+            
+            NavigationView {
+                ZStack {
+                    // Background gradient
+                    LinearGradient(
+                        colors: [
+                            Color(colorScheme == .dark ? .black : .blue.opacity(0.1)),
+                            Color(colorScheme == .dark ? .blue.opacity(0.2) : .white)
+                        ],
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing
+                    )
+                    .ignoresSafeArea()
+                    
+                    ScrollView {
+                        VStack(spacing: 20) {
+                            if viewModel.isLoading && viewModel.apod == nil {
+                                SkeletonLoadingView()
+                            } else if let apod = viewModel.apod {
+                                APODContentView(
+                                    apod: apod,
+                                    showFullScreen: $showFullScreen
+                                )
+                                .transition(.asymmetric(
+                                    insertion: .opacity.combined(with: .scale(scale: 0.95)),
+                                    removal: .opacity
+                                ))
+                            } else if let error = viewModel.error {
+                                ErrorView(error: error) {
+                                    Task {
+                                        await viewModel.fetchAPOD()
                                     }
                                 }
-                                
-                                Divider()
-                                
-                                // Açıklama
-                                VStack(alignment: .leading, spacing: 8) {
-                                    Text("Today's Story")
-                                        .font(.system(size: 18, weight: .semibold))
-                                        .foregroundColor(.primary)
-                                    
-                                    Text(apod.explanation)
-                                        .font(.system(size: 14))
-                                        .foregroundColor(.secondary)
-                                        .lineSpacing(4)
-                                }
                             }
-                            .listRowInsets(EdgeInsets())
-                            .listRowBackground(Color.clear)
                         }
+                        .padding()
                     }
-                    .listStyle(SidebarListStyle())
-                    .navigationTitle("Cosmic Daily")
-                    .toolbar {
-                        ToolbarItem(placement: .navigationBarLeading) {
-                            Button(action: {
-                                showingSettings = true
-                            }) {
-                                Image(systemName: "gearshape.fill")
-                                    .font(.system(size: 18, weight: .medium))
-                            }
-                        }
-                        
-                        ToolbarItem(placement: .navigationBarTrailing) {
-                            Button(action: {
-                                Task {
-                                    await viewModel.fetchAPOD(forceRefresh: true)
-                                }
-                            }) {
-                                Image(systemName: "arrow.clockwise")
-                                    .font(.system(size: 18, weight: .medium))
-                            }
+                }
+                .navigationTitle("Cosmic Daily")
+                .navigationBarTitleDisplayMode(.large)
+                .toolbar {
+                    ToolbarItem(placement: .navigationBarLeading) {
+                        Button(action: {
+                            showingSettings = true
+                        }) {
+                            Image(systemName: "gearshape.fill")
+                                .font(.system(size: 18, weight: .medium))
                         }
                     }
                     
-                    // Sağ Panel (Ana içerik)
-                    mainContent
-                }
-                .navigationViewStyle(DoubleColumnNavigationViewStyle())
-            } else {
-                // iPhone layout
-                NavigationView {
-                    ZStack {
-                        // Background gradient
-                        LinearGradient(
-                            colors: [
-                                Color(colorScheme == .dark ? .black : .blue.opacity(0.1)),
-                                Color(colorScheme == .dark ? .blue.opacity(0.2) : .white)
-                            ],
-                            startPoint: .topLeading,
-                            endPoint: .bottomTrailing
-                        )
-                        .ignoresSafeArea()
-                        
-                        ScrollView {
-                            VStack(spacing: 20) {
-                                if viewModel.isLoading && viewModel.apod == nil {
-                                    SkeletonLoadingView()
-                                } else if let apod = viewModel.apod {
-                                    APODContentView(
-                                        apod: apod,
-                                        showFullScreen: $showFullScreen
-                                    )
-                                    .transition(.asymmetric(
-                                        insertion: .opacity.combined(with: .scale(scale: 0.95)),
-                                        removal: .opacity
-                                    ))
-                                } else if let error = viewModel.error {
-                                    ErrorView(error: error) {
-                                        Task {
-                                            await viewModel.fetchAPOD()
-                                        }
-                                    }
-                                }
+                    ToolbarItem(placement: .navigationBarTrailing) {
+                        Button(action: {
+                            Task {
+                                await viewModel.fetchAPOD(forceRefresh: true)
                             }
-                            .padding()
-                        }
-                    }
-                    .navigationTitle("Cosmic Daily")
-                    .navigationBarTitleDisplayMode(.large)
-                    .toolbar {
-                        ToolbarItem(placement: .navigationBarLeading) {
-                            Button(action: {
-                                showingSettings = true
-                            }) {
-                                Image(systemName: "gearshape.fill")
-                                    .font(.system(size: 18, weight: .medium))
-                            }
-                        }
-                        
-                        ToolbarItem(placement: .navigationBarTrailing) {
-                            Button(action: {
-                                Task {
-                                    await viewModel.fetchAPOD(forceRefresh: true)
-                                }
-                            }) {
-                                Image(systemName: "arrow.clockwise")
-                                    .font(.system(size: 18, weight: .medium))
-                            }
+                        }) {
+                            Image(systemName: "arrow.clockwise")
+                                .font(.system(size: 18, weight: .medium))
                         }
                     }
                 }
-                .navigationViewStyle(StackNavigationViewStyle())
             }
+            .navigationViewStyle(StackNavigationViewStyle())
         }
         .task {
             await viewModel.fetchAPOD()
@@ -235,7 +160,6 @@ struct ImageDetailView: View {
     @State private var lastScale: CGFloat = 1.0
     @State private var offset: CGSize = .zero
     @State private var lastOffset: CGSize = .zero
-    @Environment(\.horizontalSizeClass) var horizontalSizeClass
     
     var body: some View {
         GeometryReader { geometry in
@@ -284,51 +208,9 @@ struct ImageDetailView: View {
                                     }
                                 }
                             }
-                            .onTapGesture {
-                                // iPhone'da fullscreen aç, iPad'de açma
-                                if horizontalSizeClass != .regular {
-                                    showFullScreen = true
-                                }
-                            }
                     } placeholder: {
                         ProgressView()
                             .scaleEffect(1.5)
-                    }
-                    
-                    // Zoom kontrolleri (sadece iPad'de göster)
-                    if horizontalSizeClass == .regular {
-                        VStack {
-                            Spacer()
-                            HStack {
-                                // Reset butonu
-                                Button(action: {
-                                    withAnimation(.spring()) {
-                                        scale = 1.0
-                                        offset = .zero
-                                        lastOffset = .zero
-                                    }
-                                }) {
-                                    Label("Reset", systemImage: "arrow.counterclockwise")
-                                        .padding(.horizontal, 16)
-                                        .padding(.vertical, 8)
-                                        .background(.regularMaterial)
-                                        .cornerRadius(20)
-                                }
-                                .opacity(scale != 1.0 || offset != .zero ? 1 : 0.5)
-                                .disabled(scale == 1.0 && offset == .zero)
-                                
-                                Spacer()
-                                
-                                // Zoom göstergesi
-                                Text("\(Int(scale * 100))%")
-                                    .font(.system(size: 14, weight: .medium))
-                                    .padding(.horizontal, 16)
-                                    .padding(.vertical, 8)
-                                    .background(.regularMaterial)
-                                    .cornerRadius(20)
-                            }
-                            .padding()
-                        }
                     }
                 }
             }
