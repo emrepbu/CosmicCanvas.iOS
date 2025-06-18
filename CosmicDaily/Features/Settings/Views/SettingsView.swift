@@ -110,7 +110,7 @@ struct SettingsView: View {
                             .foregroundColor(.secondary)
                     }
                     
-                    Link(destination: URL(string: "https://github.com")!) {
+                    Link(destination: URL(string: "https://github.com/emrepbu/CosmicDaily")!) {
                         HStack {
                             Label("Source Code", systemImage: "chevron.left.forwardslash.chevron.right")
                             Spacer()
