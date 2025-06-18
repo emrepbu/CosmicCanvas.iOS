@@ -12,70 +12,62 @@ struct TranslationView: View {
     let originalText: String
     
     var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            // Header with controls
-            HStack {
-                Text("Today's Story")
-                    .font(.system(size: 20, weight: .semibold))
-                    .foregroundColor(.primary)
-                
-                Spacer()
-                
-                // Translation Controls
-                HStack(spacing: 8) {
-                    // Language Picker
-                    LanguagePickerView(selectedLanguage: $viewModel.selectedLanguage) { language in
-                        viewModel.selectLanguage(language)
-                    }
-                    
-                    // Translate Button
-                    TranslateButton(
-                        isTranslating: viewModel.isTranslating,
-                        showOriginal: viewModel.showOriginal
-                    ) {
-                        viewModel.toggleTranslation(for: originalText)
-                    }
-                }
+        // Translation Controls
+        HStack {
+            // Language Picker
+            LanguagePickerView(selectedLanguage: $viewModel.selectedLanguage) { language in
+                viewModel.selectLanguage(language)
             }
             
+            // Translate Button
+            TranslateButton(
+                isTranslating: viewModel.isTranslating,
+                showOriginal: viewModel.showOriginal
+            ) {
+                viewModel.toggleTranslation(for: originalText)
+            }
+        }
+        
+        VStack(alignment: .leading) {
+            // Header with controls
+            Text("Today's Story")
+                .font(.largeTitle)
+                .foregroundColor(.primary)
+            
             // Content
-            ScrollView {
-                VStack(alignment: .leading, spacing: 8) {
-                    // Main text
-                    Text(viewModel.getCurrentText(originalText: originalText))
-                        .font(.system(size: 16))
-                        .foregroundColor(.secondary)
-                        .lineSpacing(6)
-                        .fixedSize(horizontal: false, vertical: true)
-                        .animation(.easeInOut(duration: 0.3), value: viewModel.showOriginal)
-                    
-                    // Error message if any
-                    if let error = viewModel.translationError {
-                        HStack {
-                            Image(systemName: "exclamationmark.triangle")
-                                .font(.system(size: 12))
-                            Text(error)
-                                .font(.system(size: 12))
-                        }
-                        .foregroundColor(.red)
-                        .padding(.top, 4)
+            VStack(alignment: .leading) {
+                // Main text
+                Text(viewModel.getCurrentText(originalText: originalText))
+                    .font(.body)
+                    .foregroundColor(.secondary)
+                    .lineSpacing(6)
+                    .animation(.easeInOut(duration: 0.3), value: viewModel.showOriginal)
+                
+                // Error message if any
+                if let error = viewModel.translationError {
+                    HStack {
+                        Image(systemName: "exclamationmark.triangle")
+                            .font(.body)
+                        Text(error)
+                            .font(.body)
                     }
-                    
-                    // Translation attribution
-                    if !viewModel.showOriginal && viewModel.translatedText != nil {
-                        HStack {
-                            Image(systemName: "info.circle")
-                                .font(.system(size: 12))
-                            Text("Translated by Google")
-                                .font(.system(size: 12))
-                            Spacer()
-                        }
-                        .foregroundColor(.secondary)
-                        .padding(.top, 4)
+                    .foregroundColor(.red)
+                    .padding()
+                }
+                
+                // Translation attribution
+                if !viewModel.showOriginal && viewModel.translatedText != nil {
+                    HStack {
+                        Image(systemName: "info.circle")
+                            .font(.body)
+                        Text("Translated by Google")
+                            .font(.body)
+                        Spacer()
                     }
+                    .foregroundColor(.secondary)
+                    .padding()
                 }
             }
-            .frame(maxHeight: 300)
         }
     }
 }
@@ -86,35 +78,18 @@ struct LanguagePickerView: View {
     let onSelect: (Language) -> Void
     
     var body: some View {
-        Menu {
+        Picker("Language", selection: $selectedLanguage) {
             ForEach(TranslationService.supportedLanguages) { language in
-                Button(action: {
-                    selectedLanguage = language
-                    onSelect(language)
-                }) {
-                    HStack {
-                        Text(language.name)
-                        if selectedLanguage.id == language.id {
-                            Image(systemName: "checkmark")
-                        }
-                    }
-                }
+                Text(language.name)
+                    .tag(language)
             }
-        } label: {
-            HStack(spacing: 4) {
-                Image(systemName: "globe")
-                Text(selectedLanguage.code.uppercased())
-                    .font(.system(size: 12, weight: .semibold))
-                Image(systemName: "chevron.down")
-                    .font(.system(size: 10))
-            }
-            .padding(.horizontal, 10)
-            .padding(.vertical, 6)
-            .background(
-                RoundedRectangle(cornerRadius: 8)
-                    .fill(Color(.tertiarySystemBackground))
-            )
         }
+        .pickerStyle(.menu)
+        .labelsHidden()
+        .onChange(of: selectedLanguage) { newLanguage in
+            onSelect(newLanguage)
+        }
+        .padding()
     }
 }
 
@@ -126,19 +101,15 @@ struct TranslateButton: View {
     
     var body: some View {
         Button(action: action) {
-            HStack(spacing: 4) {
+            HStack {
                 if isTranslating {
                     ProgressView()
-                        .scaleEffect(0.8)
                 } else {
-                    Image(systemName: showOriginal ? "character.book.closed" : "arrow.uturn.backward")
-                        .font(.system(size: 14))
+                    Image(systemName: showOriginal ? "translate" : "arrow.uturn.backward")
                 }
                 Text(showOriginal ? "Translate" : "Original")
-                    .font(.system(size: 14, weight: .medium))
             }
-            .padding(.horizontal, 12)
-            .padding(.vertical, 6)
+            .padding()
             .background(
                 RoundedRectangle(cornerRadius: 8)
                     .fill(showOriginal ? Color.blue : Color(.tertiarySystemBackground))

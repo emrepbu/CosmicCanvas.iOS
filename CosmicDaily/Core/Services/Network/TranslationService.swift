@@ -8,11 +8,21 @@
 import Foundation
 
 // MARK: - Translation Models
-struct Language: Identifiable {
+struct Language: Identifiable, Hashable {
     let id: String
     let code: String
     let name: String
     let englishName: String
+    
+    // Hashable için gerekli
+    func hash(into hasher: inout Hasher) {
+        hasher.combine(id)
+    }
+    
+    // Equatable için gerekli (Hashable'ın bir parçası)
+    static func == (lhs: Language, rhs: Language) -> Bool {
+        lhs.id == rhs.id
+    }
 }
 
 struct TranslationResponse: Codable {
