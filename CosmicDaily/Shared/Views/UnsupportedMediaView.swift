@@ -4,6 +4,8 @@
 //
 //  Created by emre argana on 17.06.2025.
 //
+//  Desteklenmeyen medya görünümü
+//  Desteklenmeyen medya türleri için gösterilen uyarı
 
 import SwiftUI
 
@@ -14,10 +16,10 @@ struct UnsupportedMediaView: View {
                 .font(.system(size: 50))
                 .foregroundColor(.orange)
             
-            Text("Unsupported Media Type")
+            Text("Desteklenmeyen Medya Türü")
                 .font(.headline)
             
-            Text("This media format is not currently supported")
+            Text("Bu medya formatı şu anda desteklenmiyor")
                 .font(.subheadline)
                 .foregroundColor(.secondary)
                 .multilineTextAlignment(.center)

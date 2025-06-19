@@ -4,6 +4,8 @@
 //
 //  Created by emre argana on 17.06.2025.
 //
+//  Hata görünümü
+//  Hata durumlarını kullanıcı dostu bir şekilde gösterir
 
 import SwiftUI
 
@@ -17,7 +19,7 @@ struct ErrorView: View {
                 .font(.system(size: 50))
                 .foregroundColor(.red)
             
-            Text("Oops! Something went wrong")
+            Text("Hay aksi! Bir şeyler yanlış gitti")
                 .font(.headline)
             
             Text(error)
@@ -27,7 +29,7 @@ struct ErrorView: View {
                 .padding(.horizontal)
             
             Button(action: retry) {
-                Label("Try Again", systemImage: "arrow.clockwise")
+                Label("Tekrar Dene", systemImage: "arrow.clockwise")
                     .font(.system(size: 16, weight: .medium))
                     .padding(.horizontal, 20)
                     .padding(.vertical, 10)

@@ -4,6 +4,7 @@
 //
 //  Created by emre argana on 10.06.2025.
 //
+//  Ana içerik görünümü - NASA'nın günlük astronomik görüntülerini gösterir
 
 import SwiftUI
 
@@ -18,7 +19,7 @@ struct ContentView: View {
             
             NavigationView {
                 ZStack {
-                    // Background gradient
+                    // Arka plan gradyanı
                     LinearGradient(
                         colors: [
                             Color(colorScheme == .dark ? .black : .blue.opacity(0.1)),
@@ -152,7 +153,8 @@ struct ContentView: View {
     }
 }
 
-// Görsel detay view'ı - zoom ve pan özellikleriyle
+/// Görsel detay view'ı - yakınlaştırma ve kaydırma özellikleriyle
+/// Tam ekran görüntüleme için kullanılır
 struct ImageDetailView: View {
     let imageURL: String
     @Binding var showFullScreen: Bool

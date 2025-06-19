@@ -4,6 +4,8 @@
 //
 //  Created by emre argana on 17.06.2025.
 //
+//  İskelet yükleme görünümü
+//  İçerik yüklenirken gösterilen yer tutucu animasyon
 
 import SwiftUI
 
@@ -12,16 +14,16 @@ struct SkeletonLoadingView: View {
     
     var body: some View {
         VStack(spacing: 16) {
-            // Header Card Skeleton
+            // Başlık Kartı İskeleti
             VStack(alignment: .leading, spacing: 12) {
-                // Title skeleton
+                // Başlık iskeleti
                 RoundedRectangle(cornerRadius: 8)
                     .fill(Color.gray.opacity(0.3))
                     .frame(height: 32)
                     .frame(maxWidth: .infinity)
                     .shimmer(isAnimating: isAnimating)
                 
-                // Date skeleton
+                // Tarih iskeleti
                 HStack {
                     RoundedRectangle(cornerRadius: 6)
                         .fill(Color.gray.opacity(0.3))
@@ -38,22 +40,22 @@ struct SkeletonLoadingView: View {
                     .shadow(color: .black.opacity(0.1), radius: 10, x: 0, y: 5)
             )
             
-            // Image Skeleton
+            // Görüntü İskeleti
             RoundedRectangle(cornerRadius: 16)
                 .fill(Color.gray.opacity(0.3))
                 .frame(height: 300)
                 .shimmer(isAnimating: isAnimating)
                 .shadow(color: .black.opacity(0.1), radius: 10, x: 0, y: 5)
             
-            // Description Card Skeleton
+            // Açıklama Kartı İskeleti
             VStack(alignment: .leading, spacing: 12) {
-                // Section title
+                // Bölüm başlığı
                 RoundedRectangle(cornerRadius: 6)
                     .fill(Color.gray.opacity(0.3))
                     .frame(width: 150, height: 24)
                     .shimmer(isAnimating: isAnimating)
                 
-                // Text lines
+                // Metin satırları
                 VStack(spacing: 8) {
                     ForEach(0..<4) { _ in
                         RoundedRectangle(cornerRadius: 4)
@@ -62,7 +64,7 @@ struct SkeletonLoadingView: View {
                             .shimmer(isAnimating: isAnimating)
                     }
                     
-                    // Last line shorter
+                    // Son satır daha kısa
                     HStack {
                         RoundedRectangle(cornerRadius: 4)
                             .fill(Color.gray.opacity(0.3))
@@ -89,7 +91,7 @@ struct SkeletonLoadingView: View {
     }
 }
 
-// Shimmer Effect Modifier
+/// Parlama Efekti Değiştiricisi
 struct ShimmerModifier: ViewModifier {
     let isAnimating: Bool
     

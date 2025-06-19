@@ -4,20 +4,33 @@
 //
 //  Created by emre argana on 17.06.2025.
 //
+//  APOD verilerini önbelleğe alma servisi
+//  Performans için hem bellek hem de disk önbelleği kullanır
 
 import Foundation
 
 class APODCacheService {
+    /// Paylaşılan tekil örnek
     static let shared = APODCacheService()
+    
+    /// Önbellek anahtarı
     private let cacheKey = "CachedAPOD"
+    
+    /// Önbellek zamanı anahtarı
     private let cacheTimeKey = "CachedAPODTime"
-    private let cacheValidityDuration: TimeInterval = 3600 // 1 hour
+    
+    /// Önbellek geçerlilik süresi (1 saat)
+    private let cacheValidityDuration: TimeInterval = 3600
+    
+    /// Bellek önbelleği
     private let memoryCache = NSCache<NSString, CacheItem>()
     
     private init() {
+        // Bellekte maksimum 10 öğe sakla
         memoryCache.countLimit = 10
     }
     
+    /// Önbellek öğesi - APOD verisi ve zaman damgasını saklar
     private class CacheItem: NSObject {
         let apod: APOD
         let timestamp: Date
@@ -28,7 +41,7 @@ class APODCacheService {
         }
     }
     
-    // Save APOD to cache
+    /// APOD verisini önbelleğe kaydet
     func saveToCache(_ apod: APOD) {
         Task.detached(priority: .background) {
             do {
@@ -37,18 +50,18 @@ class APODCacheService {
                 UserDefaults.standard.set(encoded, forKey: self.cacheKey)
                 UserDefaults.standard.set(Date(), forKey: self.cacheTimeKey)
                 
-                // Also save to memory cache
+                // Aynı zamanda bellek önbelleğine de kaydet
                 let cacheItem = CacheItem(apod: apod, timestamp: Date())
                 self.memoryCache.setObject(cacheItem, forKey: self.cacheKey as NSString)
             } catch {
-                print("Failed to cache APOD: \(error)")
+                print("APOD önbelleğe kaydedilemedi: \(error)")
             }
         }
     }
     
-    // Load APOD from cache - Optimized async version
+    /// Önbellekten APOD verisini yükle - Optimize edilmiş asenkron versiyon
     func loadFromCacheAsync() async -> APOD? {
-        // First check memory cache (super fast)
+        // Önce bellek önbelleğini kontrol et (çok hızlı)
         if let cacheItem = memoryCache.object(forKey: cacheKey as NSString) {
             if Date().timeIntervalSince(cacheItem.timestamp) <= cacheValidityDuration {
                 return cacheItem.apod
@@ -57,7 +70,7 @@ class APODCacheService {
             }
         }
         
-        // Then check disk cache asynchronously
+        // Sonra disk önbelleğini asenkron olarak kontrol et
         return await withCheckedContinuation { continuation in
             Task.detached(priority: .userInitiated) {
                 guard let cachedData = UserDefaults.standard.data(forKey: self.cacheKey),
@@ -66,9 +79,9 @@ class APODCacheService {
                     return
                 }
                 
-                // Check if cache is still valid
+                // Önbelleğin hala geçerli olup olmadığını kontrol et
                 if Date().timeIntervalSince(cacheTime) > self.cacheValidityDuration {
-                    // Clear expired cache
+                    // Süresi dolmuş önbelleği temizle
                     Task { @MainActor in
                         self.clearCache()
                     }
@@ -80,32 +93,32 @@ class APODCacheService {
                     let decoder = JSONDecoder()
                     let apod = try decoder.decode(APOD.self, from: cachedData)
                     
-                    // Save to memory cache for next time
+                    // Bir sonraki kullanım için bellek önbelleğine kaydet
                     let cacheItem = CacheItem(apod: apod, timestamp: cacheTime)
                     self.memoryCache.setObject(cacheItem, forKey: self.cacheKey as NSString)
                     
                     continuation.resume(returning: apod)
                 } catch {
-                    print("Failed to decode cached APOD: \(error)")
+                    print("Önbellekteki APOD çözülemedi: \(error)")
                     continuation.resume(returning: nil)
                 }
             }
         }
     }
     
-    // Clear cache
+    /// Önbelleği temizle
     func clearCache() {
-        // Clear memory cache
+        // Bellek önbelleğini temizle
         memoryCache.removeObject(forKey: cacheKey as NSString)
         
-        // Clear UserDefaults
+        // UserDefaults'u temizle
         UserDefaults.standard.removeObject(forKey: cacheKey)
         UserDefaults.standard.removeObject(forKey: cacheTimeKey)
         
-        print("APOD cache cleared")
+        print("APOD önbelleği temizlendi")
     }
     
-    // Check if cache is valid
+    /// Önbelleğin geçerli olup olmadığını kontrol et
     func isCacheValid() -> Bool {
         guard let cacheTime = UserDefaults.standard.object(forKey: cacheTimeKey) as? Date else {
             return false

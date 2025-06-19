@@ -4,27 +4,41 @@
 //
 //  Created by emre argana on 17.06.2025.
 //
+//  Görüntü önbellekleme servisi
+//  Disk depolama desteği ile birlikte hem bellek hem de disk önbelleği sağlar
 
 import Foundation
 
-// Image Cache Service with Disk Storage Support
+/// Disk depolama destekli görüntü önbellekleme servisi
 class ImageCacheService {
+    /// Paylaşılan tekil örnek
     static let shared = ImageCacheService()
+    
+    /// Bellek önbelleği
     private let cache = NSCache<NSString, NSData>()
+    
+    /// Dosya yöneticisi
     private let fileManager = FileManager.default
+    
+    /// Dokümanlar dizini
     private let documentsDirectory: URL?
+    
+    /// Önbellek işlemlerini yönetmek için sıra
     private let cacheQueue = DispatchQueue(label: "com.cosmicdaily.imagecache", attributes: .concurrent)
     
     private init() {
-        cache.countLimit = 50 // Maximum 50 images in memory
-        cache.totalCostLimit = 100 * 1024 * 1024 // 100 MB
+        // Bellekte maksimum 50 görüntü
+        cache.countLimit = 50
+        // Maksimum 100 MB bellek kullanımı
+        cache.totalCostLimit = 100 * 1024 * 1024
         
-        // Get documents directory
+        // Dokümanlar dizinini al
         documentsDirectory = fileManager.urls(for: .documentDirectory,
                                               in: .userDomainMask).first
         createCacheDirectory()
     }
     
+    /// Önbellek dizinini oluştur
     private func createCacheDirectory() {
         guard let documentsDirectory = documentsDirectory else { return }
         let cacheDirectory = documentsDirectory.appendingPathComponent("CachedImages")
@@ -36,9 +50,10 @@ class ImageCacheService {
         }
     }
     
+    /// Verilen anahtar için dosya URL'ini oluştur
     private func fileURL(for key: String) -> URL? {
         guard let documentsDirectory = documentsDirectory else { return nil }
-        // Create safe filename from URL
+        // URL'den güvenli dosya adı oluştur
         let safeFileName = key.replacingOccurrences(of: "/", with: "_")
             .replacingOccurrences(of: ":", with: "_")
             .replacingOccurrences(of: ".", with: "_")
@@ -47,11 +62,12 @@ class ImageCacheService {
             .appendingPathComponent("\(safeFileName).jpg")
     }
     
+    /// Görüntü verisini önbelleğe kaydet
     func saveImage(data: Data, forKey key: String) {
-        // Save to memory cache
+        // Bellek önbelleğine kaydet
         cache.setObject(data as NSData, forKey: key as NSString, cost: data.count)
         
-        // Save to disk asynchronously
+        // Asenkron olarak diske kaydet
         cacheQueue.async(flags: .barrier) {
             if let fileURL = self.fileURL(for: key) {
                 try? data.write(to: fileURL)
@@ -59,13 +75,14 @@ class ImageCacheService {
         }
     }
     
+    /// Önbellekten görüntü verisini yükle
     func loadImage(forKey key: String) -> Data? {
-        // First check memory cache
+        // Önce bellek önbelleğini kontrol et
         if let data = cache.object(forKey: key as NSString) as Data? {
             return data
         }
         
-        // Then check disk
+        // Sonra diski kontrol et
         var diskData: Data?
         cacheQueue.sync {
             if let fileURL = fileURL(for: key) {
@@ -74,7 +91,7 @@ class ImageCacheService {
         }
         
         if let data = diskData {
-            // Add back to memory cache
+            // Bellek önbelleğine geri ekle
             cache.setObject(data as NSData, forKey: key as NSString, cost: data.count)
             return data
         }
@@ -82,22 +99,23 @@ class ImageCacheService {
         return nil
     }
     
+    /// Tüm önbelleği temizle
     func clearCache() {
-        // Clear memory cache
+        // Bellek önbelleğini temizle
         cache.removeAllObjects()
         
-        // Clear disk cache
+        // Disk önbelleğini temizle
         cacheQueue.async(flags: .barrier) {
             guard let documentsDirectory = self.documentsDirectory else { return }
             let cacheDirectory = documentsDirectory.appendingPathComponent("CachedImages")
             
-            // Remove all files in cache directory
+            // Önbellek dizinindeki tüm dosyaları kaldır
             if let files = try? self.fileManager.contentsOfDirectory(at: cacheDirectory,
                                                                 includingPropertiesForKeys: nil) {
                 for file in files {
                     try? self.fileManager.removeItem(at: file)
                 }
-                print("Image cache cleared - removed \(files.count) files")
+                print("Görüntü önbelleği temizlendi - \(files.count) dosya kaldırıldı")
             }
         }
     }

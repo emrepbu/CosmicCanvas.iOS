@@ -4,6 +4,8 @@
 //
 //  Created by emre argana on 18.06.2025.
 //
+//  Çeviri görünümü
+//  Metin çeviri kontrolleri ve gösterimini sağlar
 
 import SwiftUI
 
@@ -12,14 +14,14 @@ struct TranslationView: View {
     let originalText: String
     
     var body: some View {
-        // Translation Controls
+        // Çeviri Kontrolleri
         HStack {
-            // Language Picker
+            // Dil Seçici
             LanguagePickerView(selectedLanguage: $viewModel.selectedLanguage) { language in
                 viewModel.selectLanguage(language)
             }
             
-            // Translate Button
+            // Çeviri Butonu
             TranslateButton(
                 isTranslating: viewModel.isTranslating,
                 showOriginal: viewModel.showOriginal
@@ -29,21 +31,21 @@ struct TranslationView: View {
         }
         
         VStack(alignment: .leading) {
-            // Header with controls
-            Text("Today's Story")
+            // Kontrollerle başlık
+            Text("Günün Hikayesi")
                 .font(.largeTitle)
                 .foregroundColor(.primary)
             
-            // Content
+            // İçerik
             VStack(alignment: .leading) {
-                // Main text
+                // Ana metin
                 Text(viewModel.getCurrentText(originalText: originalText))
                     .font(.body)
                     .foregroundColor(.secondary)
                     .lineSpacing(6)
                     .animation(.easeInOut(duration: 0.3), value: viewModel.showOriginal)
                 
-                // Error message if any
+                // Hata mesajı (varsa)
                 if let error = viewModel.translationError {
                     HStack {
                         Image(systemName: "exclamationmark.triangle")
@@ -55,12 +57,12 @@ struct TranslationView: View {
                     .padding()
                 }
                 
-                // Translation attribution
+                // Çeviri atfı
                 if !viewModel.showOriginal && viewModel.translatedText != nil {
                     HStack {
                         Image(systemName: "info.circle")
                             .font(.body)
-                        Text("Translated by Google")
+                        Text("Google tarafından çevrildi")
                             .font(.body)
                         Spacer()
                     }
@@ -72,13 +74,13 @@ struct TranslationView: View {
     }
 }
 
-// MARK: - Language Picker View
+// MARK: - Dil Seçici Görünümü
 struct LanguagePickerView: View {
     @Binding var selectedLanguage: Language
     let onSelect: (Language) -> Void
     
     var body: some View {
-        Picker("Language", selection: $selectedLanguage) {
+        Picker("Dil", selection: $selectedLanguage) {
             ForEach(TranslationService.supportedLanguages) { language in
                 Text(language.name)
                     .tag(language)
@@ -93,7 +95,7 @@ struct LanguagePickerView: View {
     }
 }
 
-// MARK: - Translate Button
+// MARK: - Çeviri Butonu
 struct TranslateButton: View {
     let isTranslating: Bool
     let showOriginal: Bool
@@ -107,7 +109,7 @@ struct TranslateButton: View {
                 } else {
                     Image(systemName: showOriginal ? "translate" : "arrow.uturn.backward")
                 }
-                Text(showOriginal ? "Translate" : "Original")
+                Text(showOriginal ? "Çevir" : "Orijinal")
             }
             .padding()
             .background(

@@ -4,6 +4,8 @@
 //
 //  Created by emre argana on 17.06.2025.
 //
+//  Görüntü içerik görünümü
+//  Ana ekranda görüntüleri gösterir ve tam ekran görüntüleme için etkileşim sağlar
 
 import SwiftUI
 
@@ -22,7 +24,7 @@ struct ImageContentView: View {
                         .cornerRadius(16)
                         .shadow(color: .black.opacity(0.2), radius: 15, x: 0, y: 10)
                         .onTapGesture {
-                            print("Image tapped - URL: \(imageURL)")
+                            print("Görüntüye dokunuldu - URL: \(imageURL)")
                             showFullScreen = true
                         }
                         .onAppear {
@@ -47,7 +49,7 @@ struct ImageContentView: View {
                     Image(systemName: "exclamationmark.triangle")
                         .font(.system(size: 50))
                         .foregroundColor(.orange)
-                    Text("Invalid image URL")
+                    Text("Geçersiz görüntü URL'i")
                         .foregroundColor(.secondary)
                 }
                 .frame(height: 300)
@@ -62,7 +64,7 @@ struct ImageContentView: View {
                 HStack {
                     Image(systemName: "hand.tap.fill")
                         .font(.system(size: 14))
-                    Text("Tap to view full screen")
+                    Text("Tam ekran için dokun")
                         .font(.system(size: 14))
                 }
                 .foregroundColor(.secondary)

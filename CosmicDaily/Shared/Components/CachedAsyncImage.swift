@@ -4,6 +4,8 @@
 //
 //  Created by emre argana on 17.06.2025.
 //
+//  Önbellekli asenkron görüntü bileşeni
+//  Görüntüleri asenkron olarak yükler ve önbelleğe alır
 
 import SwiftUI
 
@@ -35,15 +37,15 @@ struct CachedAsyncImage<Content: View, Placeholder: View>: View {
             } else if isLoading {
                 placeholder()
             } else {
-                // Failed to load
+                // Yükleme başarısız
                 VStack(spacing: 16) {
                     Image(systemName: "photo.fill")
                         .font(.system(size: 50))
                         .foregroundColor(.gray)
-                    Text("Failed to load image")
+                    Text("Görüntü yüklenemedi")
                         .foregroundColor(.secondary)
                     
-                    Button("Retry") {
+                    Button("Tekrar Dene") {
                         isLoading = true
                         loadImage()
                     }
@@ -67,26 +69,26 @@ struct CachedAsyncImage<Content: View, Placeholder: View>: View {
         
         let urlString = url.absoluteString
         
-        // First check cache
+        // Önce önbelleği kontrol et
         if let cachedData = imageCache.loadImage(forKey: urlString),
            let cachedImage = UIImage(data: cachedData) {
             self.image = cachedImage
             self.isLoading = false
-            print("Loaded image from cache: \(urlString)")
+            print("Görüntü önbellekten yüklendi: \(urlString)")
             return
         }
         
-        // If not in cache, download
+        // Önbellekte yoksa, indir
         Task {
             do {
                 let (data, _) = try await URLSession.shared.data(from: url)
                 
                 if let downloadedImage = UIImage(data: data) {
-                    // Save to cache
+                    // Önbelleğe kaydet
                     imageCache.saveImage(data: data, forKey: urlString)
-                    print("Downloaded and cached image: \(urlString)")
+                    print("Görüntü indirildi ve önbelleğe kaydedildi: \(urlString)")
                     
-                    // Update UI on main thread
+                    // UI'ı ana thread'de güncelle
                     await MainActor.run {
                         withAnimation(.easeIn(duration: 0.3)) {
                             self.image = downloadedImage
@@ -99,7 +101,7 @@ struct CachedAsyncImage<Content: View, Placeholder: View>: View {
                     }
                 }
             } catch {
-                print("Failed to download image: \(error)")
+                print("Görüntü indirilemedi: \(error)")
                 await MainActor.run {
                     self.isLoading = false
                 }
@@ -108,7 +110,7 @@ struct CachedAsyncImage<Content: View, Placeholder: View>: View {
     }
 }
 
-// Convenience initializer for simple use cases
+/// Basit kullanım durumları için kolaylaştırılmış başlatıcı
 extension CachedAsyncImage where Placeholder == AnyView {
     init(url: URL?, @ViewBuilder content: @escaping (Image) -> Content) {
         self.init(url: url, content: content) {

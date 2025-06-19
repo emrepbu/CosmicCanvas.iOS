@@ -4,6 +4,7 @@
 //
 //  Created by emre argana on 10.06.2025.
 //
+//  Ana uygulama dosyası - SwiftUI uygulamasının giriş noktası
 
 import SwiftUI
 

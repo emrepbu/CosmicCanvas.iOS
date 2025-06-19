@@ -4,6 +4,8 @@
 //
 //  Created by emre argana on 17.06.2025.
 //
+//  Video içerik görünümü
+//  Video türündeki APOD içeriklerini oynatır
 
 import SwiftUI
 import AVKit
@@ -26,7 +28,7 @@ struct VideoContentView: View {
                 Button(action: {
                     player?.play()
                 }) {
-                    Label("Play", systemImage: "play.fill")
+                    Label("Oynat", systemImage: "play.fill")
                         .font(.system(size: 16, weight: .medium))
                 }
                 .buttonStyle(.bordered)
@@ -34,7 +36,7 @@ struct VideoContentView: View {
                 Button(action: {
                     player?.pause()
                 }) {
-                    Label("Pause", systemImage: "pause.fill")
+                    Label("Duraklat", systemImage: "pause.fill")
                         .font(.system(size: 16, weight: .medium))
                 }
                 .buttonStyle(.bordered)

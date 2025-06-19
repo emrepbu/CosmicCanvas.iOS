@@ -4,6 +4,8 @@
 //
 //  Created by emre argana on 17.06.2025.
 //
+//  APOD içerik görünümü
+//  Günün astronomik görüntüsünü ve açıklamasını gösterir
 
 import SwiftUI
 
@@ -14,7 +16,7 @@ struct APODContentView: View {
     
     var body: some View {
         VStack(spacing: 16) {
-            // Header Card
+            // Başlık Kartı
             VStack(alignment: .leading, spacing: 12) {
                 Text(apod.title)
                     .font(.system(size: 28, weight: .bold, design: .serif))
@@ -44,7 +46,7 @@ struct APODContentView: View {
                     .shadow(color: .black.opacity(0.1), radius: 10, x: 0, y: 5)
             )
             
-            // Media Content
+            // Medya İçeriği
             if apod.mediaType == "image" {
                 let imageURL = apod.hdurl ?? apod.url
                 ImageContentView(
@@ -58,7 +60,7 @@ struct APODContentView: View {
                 UnsupportedMediaView()
             }
             
-            // Description Card with Translation
+            // Çeviri ile Açıklama Kartı
             VStack {
                 TranslationView(originalText: apod.explanation)
             }

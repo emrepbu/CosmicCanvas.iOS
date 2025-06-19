@@ -4,12 +4,14 @@
 //
 //  Created by emre argana on 17.06.2025.
 //
+//  Tam ekran görüntü görünümü
+//  Yakınlaştırma ve kaydırma özellikleri ile tam ekran görüntü gösterimi sağlar
 
 import SwiftUI
 
-/// A full-screen image viewer with zoom and pan capabilities
+/// Yakınlaştırma ve kaydırma özellikleri ile tam ekran görüntü görüntüleyici
 struct FullScreenImageView: View {
-    // MARK: - Properties
+    // MARK: - Özellikler
     
     let imageURL: String
     @Binding var isPresented: Bool
@@ -23,7 +25,7 @@ struct FullScreenImageView: View {
     
     @Environment(\.dismiss) private var dismiss
     
-    // MARK: - Body
+    // MARK: - Ana Görünüm
     
     var body: some View {
         ZStack {
@@ -70,9 +72,9 @@ struct FullScreenImageView: View {
         .statusBar(hidden: true)
     }
     
-    // MARK: - View Components
+    // MARK: - Görünüm Bileşenleri
     
-    /// Close button positioned at top right
+    /// Sağ üstte konumlandırılmış kapat butonu
     private var closeButton: some View {
         VStack {
             HStack {
@@ -89,7 +91,7 @@ struct FullScreenImageView: View {
         }
     }
     
-    /// Bottom control buttons for image manipulation
+    /// Görüntü kontrolü için alt kontrol butonları
     private var bottomControls: some View {
         VStack {
             Spacer()
@@ -103,13 +105,13 @@ struct FullScreenImageView: View {
         }
     }
     
-    /// Reset button to restore original image state
+    /// Görüntüyü orijinal durumuna getiren sıfırlama butonu
     private var resetButton: some View {
         Button(action: resetImageState) {
             VStack(spacing: 4) {
                 Image(systemName: "arrow.counterclockwise")
                     .font(.system(size: 20))
-                Text("Reset")
+                Text("Sıfırla")
                     .font(.system(size: 12))
             }
             .foregroundColor(.white)
@@ -123,7 +125,7 @@ struct FullScreenImageView: View {
         .disabled(scale == 1.0 && offset == .zero)
     }
     
-    /// Current zoom level indicator
+    /// Mevcut yakınlaştırma seviyesi göstergesi
     private var zoomInfoLabel: some View {
         Text("\(Int(scale * 100))%")
             .font(.system(size: 16, weight: .medium))
@@ -136,13 +138,13 @@ struct FullScreenImageView: View {
             )
     }
     
-    /// Fit to screen button
+    /// Ekrana sığdırma butonu
     private var fitToScreenButton: some View {
         Button(action: resetImageState) {
             VStack(spacing: 4) {
                 Image(systemName: "arrow.up.left.and.arrow.down.right")
                     .font(.system(size: 20))
-                Text("Fit")
+                Text("Sığdır")
                     .font(.system(size: 12))
             }
             .foregroundColor(.white)
@@ -154,15 +156,15 @@ struct FullScreenImageView: View {
         }
     }
     
-    /// Instructions overlay shown when image is at default scale
+    /// Görüntü varsayılan ölçekte olduğunda gösterilen talimatlar
     private var instructionsOverlay: some View {
         Group {
             if scale == 1.0 {
                 VStack {
                     Spacer()
                     HStack(spacing: 20) {
-                        Label("Pinch to zoom", systemImage: "arrow.up.left.and.arrow.down.right")
-                        Label("Double tap to zoom", systemImage: "hand.tap")
+                        Label("Yakınlaştırmak için sıkıştır", systemImage: "arrow.up.left.and.arrow.down.right")
+                        Label("Çift dokun", systemImage: "hand.tap")
                     }
                     .font(.system(size: 14))
                     .foregroundColor(.white.opacity(0.7))
@@ -180,13 +182,13 @@ struct FullScreenImageView: View {
         }
     }
     
-    /// Error view for invalid URL
+    /// Geçersiz URL için hata görünümü
     private var invalidURLView: some View {
         VStack(spacing: 20) {
             Image(systemName: "exclamationmark.triangle")
                 .font(.system(size: 50))
                 .foregroundColor(.yellow)
-            Text("Invalid URL")
+            Text("Geçersiz URL")
                 .foregroundColor(.white)
             Text(imageURL)
                 .font(.caption)
@@ -195,20 +197,20 @@ struct FullScreenImageView: View {
         }
     }
     
-    /// Error view when no image URL is provided
+    /// Görüntü URL'i sağlanmadığında gösterilen hata görünümü
     private var noImageProvidedView: some View {
         VStack(spacing: 20) {
             Image(systemName: "photo")
                 .font(.system(size: 50))
                 .foregroundColor(.white)
-            Text("No image URL provided")
+            Text("Görüntü URL'i sağlanmadı")
                 .foregroundColor(.white)
         }
     }
     
-    // MARK: - Gestures
+    // MARK: - Hareketler
     
-    /// Pinch gesture for zooming
+    /// Yakınlaştırma için sıkıştırma hareketi
     private var magnificationGesture: some Gesture {
         MagnificationGesture()
             .onChanged { value in
@@ -243,7 +245,7 @@ struct FullScreenImageView: View {
             }
     }
     
-    /// Drag gesture for panning
+    /// Kaydırma için sürükleme hareketi
     private var dragGesture: some Gesture {
         DragGesture()
             .onChanged { value in
@@ -277,9 +279,9 @@ struct FullScreenImageView: View {
             }
     }
     
-    // MARK: - Methods
+    // MARK: - Metodlar
     
-    /// Handles double tap gesture to toggle zoom
+    /// Yakınlaştırmayı açıp kapatmak için çift dokunma hareketini işler
     private func handleDoubleTap() {
         var transaction = Transaction()
         transaction.animation = .spring(response: 0.3, dampingFraction: 0.8)
@@ -295,7 +297,7 @@ struct FullScreenImageView: View {
         }
     }
     
-    /// Resets image to original state
+    /// Görüntüyü orijinal durumuna sıfırlar
     private func resetImageState() {
         var transaction = Transaction()
         transaction.animation = .spring(response: 0.3, dampingFraction: 0.8)

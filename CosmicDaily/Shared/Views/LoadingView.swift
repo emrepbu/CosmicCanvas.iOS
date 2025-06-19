@@ -4,6 +4,8 @@
 //
 //  Created by emre argana on 17.06.2025.
 //
+//  Yükleme görünümü
+//  Yükleme durumunu animasyonlu bir şekilde gösterir
 
 import SwiftUI
 
@@ -28,7 +30,7 @@ struct LoadingView: View {
                     .animation(.linear(duration: 1).repeatForever(autoreverses: false), value: isAnimating)
             }
             
-            Text("Loading cosmic wonders...")
+            Text("Kozmik harikalar yükleniyor...")
                 .font(.system(size: 18, weight: .medium))
                 .foregroundColor(.secondary)
         }
