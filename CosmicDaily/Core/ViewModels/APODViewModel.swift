@@ -88,12 +88,12 @@ class APODViewModel: ObservableObject {
                 await preloadImage(url: fetchedAPOD.hdurl ?? fetchedAPOD.url)
             }
         } catch {
-            self.error = "Veri alınamadı: \(error.localizedDescription)"
+            self.error = "Failed to fetch data: \(error.localizedDescription)"
             
             // Ağ başarısız olursa, süresi dolmuş olsa bile önbellekteki veriyi göster
             if let cachedAPOD = await cache.loadFromCacheAsync() {
                 self.apod = cachedAPOD
-                self.error = "Çevrimdışı mod: Önbellek verisi gösteriliyor"
+                self.error = "Offline mode: Showing cached data"
             }
         }
     }

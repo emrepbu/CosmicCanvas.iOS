@@ -174,17 +174,17 @@ enum TranslationError: LocalizedError {
     var errorDescription: String? {
         switch self {
         case .encodingFailed:
-            return "Çeviri için metin kodlanamadı"
+            return "Failed to encode text for translation"
         case .invalidURL:
-            return "Geçersiz çeviri URL'i"
+            return "Invalid translation URL"
         case .invalidResponse:
-            return "Çeviri servisinden geçersiz yanıt"
+            return "Invalid response from translation service"
         case .parsingFailed:
-            return "Çeviri yanıtı işlenemedi"
+            return "Failed to parse translation response"
         case .emptyTranslation:
-            return "Çeviri boş sonuç döndürdü"
+            return "Translation returned empty result"
         case .networkError(let error):
-            return "Ağ hatası: \(error.localizedDescription)"
+            return "Network error: \(error.localizedDescription)"
         }
     }
 }

@@ -16,10 +16,10 @@ struct UnsupportedMediaView: View {
                 .font(.system(size: 50))
                 .foregroundColor(.orange)
             
-            Text("Desteklenmeyen Medya Türü")
+            Text("Unsupported Media Type")
                 .font(.headline)
             
-            Text("Bu medya formatı şu anda desteklenmiyor")
+            Text("This media format is not currently supported")
                 .font(.subheadline)
                 .foregroundColor(.secondary)
                 .multilineTextAlignment(.center)

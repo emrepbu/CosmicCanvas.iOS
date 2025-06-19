@@ -28,7 +28,7 @@ struct VideoContentView: View {
                 Button(action: {
                     player?.play()
                 }) {
-                    Label("Oynat", systemImage: "play.fill")
+                    Label("Play", systemImage: "play.fill")
                         .font(.system(size: 16, weight: .medium))
                 }
                 .buttonStyle(.bordered)
@@ -36,7 +36,7 @@ struct VideoContentView: View {
                 Button(action: {
                     player?.pause()
                 }) {
-                    Label("Duraklat", systemImage: "pause.fill")
+                    Label("Pause", systemImage: "pause.fill")
                         .font(.system(size: 16, weight: .medium))
                 }
                 .buttonStyle(.bordered)

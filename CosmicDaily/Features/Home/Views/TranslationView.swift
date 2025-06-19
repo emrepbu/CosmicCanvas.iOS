@@ -32,7 +32,7 @@ struct TranslationView: View {
         
         VStack(alignment: .leading) {
             // Kontrollerle başlık
-            Text("Günün Hikayesi")
+            Text("Today's Story")
                 .font(.largeTitle)
                 .foregroundColor(.primary)
             
@@ -62,7 +62,7 @@ struct TranslationView: View {
                     HStack {
                         Image(systemName: "info.circle")
                             .font(.body)
-                        Text("Google tarafından çevrildi")
+                        Text("Translated by Google")
                             .font(.body)
                         Spacer()
                     }
@@ -80,7 +80,7 @@ struct LanguagePickerView: View {
     let onSelect: (Language) -> Void
     
     var body: some View {
-        Picker("Dil", selection: $selectedLanguage) {
+        Picker("Language", selection: $selectedLanguage) {
             ForEach(TranslationService.supportedLanguages) { language in
                 Text(language.name)
                     .tag(language)
@@ -109,7 +109,7 @@ struct TranslateButton: View {
                 } else {
                     Image(systemName: showOriginal ? "translate" : "arrow.uturn.backward")
                 }
-                Text(showOriginal ? "Çevir" : "Orijinal")
+                Text(showOriginal ? "Translate" : "Original")
             }
             .padding()
             .background(

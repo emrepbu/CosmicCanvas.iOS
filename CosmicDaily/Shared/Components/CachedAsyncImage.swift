@@ -42,10 +42,10 @@ struct CachedAsyncImage<Content: View, Placeholder: View>: View {
                     Image(systemName: "photo.fill")
                         .font(.system(size: 50))
                         .foregroundColor(.gray)
-                    Text("Görüntü yüklenemedi")
+                    Text("Failed to load image")
                         .foregroundColor(.secondary)
                     
-                    Button("Tekrar Dene") {
+                    Button("Retry") {
                         isLoading = true
                         loadImage()
                     }

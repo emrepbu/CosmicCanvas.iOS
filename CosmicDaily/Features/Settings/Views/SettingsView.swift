@@ -33,9 +33,9 @@ struct SettingsView: View {
                             .foregroundColor(apiKey == "DEMO_KEY" ? .orange : .green)
                         
                         VStack(alignment: .leading) {
-                            Text(apiKey == "DEMO_KEY" ? "Demo Anahtarı Kullanılıyor" : "Özel Anahtar Kullanılıyor")
+                            Text(apiKey == "DEMO_KEY" ? "Using Demo Key" : "Using Custom Key")
                                 .font(.headline)
-                            Text(apiKey == "DEMO_KEY" ? "Sınırlı istek" : "Sınırsız istek")
+                            Text(apiKey == "DEMO_KEY" ? "Limited requests" : "Unlimited requests")
                                 .font(.caption)
                                 .foregroundColor(.secondary)
                         }
@@ -60,20 +60,20 @@ struct SettingsView: View {
                     Button(action: saveApiKey) {
                         HStack {
                             Image(systemName: "square.and.arrow.down")
-                            Text("API Anahtarını Kaydet")
+                            Text("Save API Key")
                         }
                     }
                     .disabled(tempApiKey.isEmpty || tempApiKey == apiKey)
                 } header: {
-                    Label("API Yapılandırması", systemImage: "key.fill")
+                    Label("API Configuration", systemImage: "key.fill")
                 } footer: {
-                    Text("Uzay görüntülerine sınırsız erişim için NASA'dan [api.nasa.gov](https://api.nasa.gov) ücretsiz API anahtarınızı alın.")
+                    Text("Get your free API key from NASA [api.nasa.gov](https://api.nasa.gov) to enjoy unlimited access to space imagery.")
                 }
                 
                 // Depolama Bölümü
                 Section {
                     HStack {
-                        Label("Önbellek Boyutu", systemImage: "internaldrive")
+                        Label("Cache Size", systemImage: "internaldrive")
                         Spacer()
                         Text(getCacheSize())
                             .foregroundColor(.secondary)
@@ -81,7 +81,7 @@ struct SettingsView: View {
                     
                     Button(action: { showingClearCacheAlert = true }) {
                         HStack {
-                            Label("Önbelleği Temizle", systemImage: "trash")
+                            Label("Clear Cache", systemImage: "trash")
                                 .foregroundColor(.red)
                             Spacer()
                             if showingClearCache {
@@ -91,22 +91,22 @@ struct SettingsView: View {
                         }
                     }
                 } header: {
-                    Text("Depolama")
+                    Text("Storage")
                 } footer: {
-                    Text("Alan açmak için önbellekteki görüntü ve verileri temizleyin.")
+                    Text("Clear cached images and data to free up space.")
                 }
                 
                 // Hakkında Bölümü
                 Section {
                     HStack {
-                        Label("Sürüm", systemImage: "app.badge")
+                        Label("Version", systemImage: "app.badge")
                         Spacer()
                         Text("\(appVersion) (\(buildNumber))")
                             .foregroundColor(.secondary)
                     }
                     
                     HStack {
-                        Label("Geliştirici", systemImage: "person.circle")
+                        Label("Developer", systemImage: "person.circle")
                         Spacer()
                         Text("Emre Argana")
                             .foregroundColor(.secondary)
@@ -114,7 +114,7 @@ struct SettingsView: View {
                     
                     Link(destination: URL(string: "https://github.com/emrepbu/CosmicDaily")!) {
                         HStack {
-                            Label("Kaynak Kodu", systemImage: "chevron.left.forwardslash.chevron.right")
+                            Label("Source Code", systemImage: "chevron.left.forwardslash.chevron.right")
                             Spacer()
                             Image(systemName: "arrow.up.right.square")
                                 .font(.caption)
@@ -124,7 +124,7 @@ struct SettingsView: View {
                     
                     Link(destination: URL(string: "https://apod.nasa.gov/apod/")!) {
                         HStack {
-                            Label("NASA APOD Web Sitesi", systemImage: "globe")
+                            Label("NASA APOD Website", systemImage: "globe")
                             Spacer()
                             Image(systemName: "arrow.up.right.square")
                                 .font(.caption)
@@ -132,22 +132,22 @@ struct SettingsView: View {
                         }
                     }
                 } header: {
-                    Text("Hakkında")
+                    Text("About")
                 } footer: {
                     VStack(alignment: .leading, spacing: 8) {
                         Text("Cosmic Daily")
                             .font(.headline)
-                        Text("Evreni keşfedin! NASA her gün büyüleyici evrenimizden farklı bir görüntü veya fotoğraf paylaşır.")
+                        Text("Discover the cosmos! Each day NASA features a different image or photograph of our fascinating universe.")
                             .font(.caption)
                     }
                     .padding(.top, 8)
                 }
             }
-            .navigationTitle("Ayarlar")
+            .navigationTitle("Settings")
             .navigationBarTitleDisplayMode(.large)
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    Button("Tamam") {
+                    Button("Done") {
                         dismiss()
                     }
                 }
@@ -155,18 +155,18 @@ struct SettingsView: View {
             .onAppear {
                 tempApiKey = apiKey == "DEMO_KEY" ? "" : apiKey
             }
-            .alert("API Anahtarı Kaydedildi", isPresented: $showingApiKeySaved) {
+            .alert("API Key Saved", isPresented: $showingApiKeySaved) {
                 Button("OK") { }
             } message: {
-                Text("API anahtarınız başarıyla kaydedildi")
+                Text("Your API key has been saved successfully")
             }
-            .alert("Önbelleği Temizle?", isPresented: $showingClearCacheAlert) {
-                Button("İptal", role: .cancel) { }
-                Button("Temizle", role: .destructive) {
+            .alert("Clear Cache?", isPresented: $showingClearCacheAlert) {
+                Button("Cancel", role: .cancel) { }
+                Button("Clear", role: .destructive) {
                     clearCache()
                 }
             } message: {
-                Text("Bu işlem tüm önbellekteki görüntü ve verileri kaldıracaktır. İçeriği yeniden yüklemek için internet bağlantısına ihtiyacınız olacak.")
+                Text("This will remove all cached images and data. You'll need an internet connection to reload content.")
             }
         }
     }

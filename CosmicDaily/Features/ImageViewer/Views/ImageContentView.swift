@@ -49,7 +49,7 @@ struct ImageContentView: View {
                     Image(systemName: "exclamationmark.triangle")
                         .font(.system(size: 50))
                         .foregroundColor(.orange)
-                    Text("Geçersiz görüntü URL'i")
+                    Text("Invalid image URL")
                         .foregroundColor(.secondary)
                 }
                 .frame(height: 300)
@@ -64,7 +64,7 @@ struct ImageContentView: View {
                 HStack {
                     Image(systemName: "hand.tap.fill")
                         .font(.system(size: 14))
-                    Text("Tam ekran için dokun")
+                    Text("Tap to view full screen")
                         .font(.system(size: 14))
                 }
                 .foregroundColor(.secondary)

@@ -19,7 +19,7 @@ struct ErrorView: View {
                 .font(.system(size: 50))
                 .foregroundColor(.red)
             
-            Text("Hay aksi! Bir şeyler yanlış gitti")
+            Text("Oops! Something went wrong")
                 .font(.headline)
             
             Text(error)
@@ -29,7 +29,7 @@ struct ErrorView: View {
                 .padding(.horizontal)
             
             Button(action: retry) {
-                Label("Tekrar Dene", systemImage: "arrow.clockwise")
+                Label("Try Again", systemImage: "arrow.clockwise")
                     .font(.system(size: 16, weight: .medium))
                     .padding(.horizontal, 20)
                     .padding(.vertical, 10)

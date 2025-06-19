@@ -111,7 +111,7 @@ struct FullScreenImageView: View {
             VStack(spacing: 4) {
                 Image(systemName: "arrow.counterclockwise")
                     .font(.system(size: 20))
-                Text("Sıfırla")
+                Text("Reset")
                     .font(.system(size: 12))
             }
             .foregroundColor(.white)
@@ -144,7 +144,7 @@ struct FullScreenImageView: View {
             VStack(spacing: 4) {
                 Image(systemName: "arrow.up.left.and.arrow.down.right")
                     .font(.system(size: 20))
-                Text("Sığdır")
+                Text("Fit")
                     .font(.system(size: 12))
             }
             .foregroundColor(.white)
@@ -163,8 +163,8 @@ struct FullScreenImageView: View {
                 VStack {
                     Spacer()
                     HStack(spacing: 20) {
-                        Label("Yakınlaştırmak için sıkıştır", systemImage: "arrow.up.left.and.arrow.down.right")
-                        Label("Çift dokun", systemImage: "hand.tap")
+                        Label("Pinch to zoom", systemImage: "arrow.up.left.and.arrow.down.right")
+                        Label("Double tap to zoom", systemImage: "hand.tap")
                     }
                     .font(.system(size: 14))
                     .foregroundColor(.white.opacity(0.7))
@@ -188,7 +188,7 @@ struct FullScreenImageView: View {
             Image(systemName: "exclamationmark.triangle")
                 .font(.system(size: 50))
                 .foregroundColor(.yellow)
-            Text("Geçersiz URL")
+            Text("Invalid URL")
                 .foregroundColor(.white)
             Text(imageURL)
                 .font(.caption)
@@ -203,7 +203,7 @@ struct FullScreenImageView: View {
             Image(systemName: "photo")
                 .font(.system(size: 50))
                 .foregroundColor(.white)
-            Text("Görüntü URL'i sağlanmadı")
+            Text("No image URL provided")
                 .foregroundColor(.white)
         }
     }
