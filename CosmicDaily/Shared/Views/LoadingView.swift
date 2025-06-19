@@ -30,7 +30,7 @@ struct LoadingView: View {
                     .animation(.linear(duration: 1).repeatForever(autoreverses: false), value: isAnimating)
             }
             
-            Text("Loading cosmic wonders...")
+            Text("Loading NASA photo...")
                 .font(.system(size: 18, weight: .medium))
                 .foregroundColor(.secondary)
         }

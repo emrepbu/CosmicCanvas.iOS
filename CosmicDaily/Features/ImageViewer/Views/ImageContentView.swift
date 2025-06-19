@@ -64,7 +64,7 @@ struct ImageContentView: View {
                 HStack {
                     Image(systemName: "hand.tap.fill")
                         .font(.system(size: 14))
-                    Text("Tap to view full screen")
+                    Text("Tap to view full screen & zoom")
                         .font(.system(size: 14))
                 }
                 .foregroundColor(.secondary)

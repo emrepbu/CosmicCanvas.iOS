@@ -44,7 +44,7 @@ struct SettingsView: View {
                     // API Anahtarı Girişi
                     HStack {
                         if showApiKey {
-                            TextField("NASA API Key", text: $tempApiKey)
+                            TextField("Enter NASA API Key", text: $tempApiKey)
                                 .autocapitalization(.none)
                                 .disableAutocorrection(true)
                         } else {

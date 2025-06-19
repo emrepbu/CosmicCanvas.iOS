@@ -163,8 +163,8 @@ struct FullScreenImageView: View {
                 VStack {
                     Spacer()
                     HStack(spacing: 20) {
-                        Label("Pinch to zoom", systemImage: "arrow.up.left.and.arrow.down.right")
-                        Label("Double tap to zoom", systemImage: "hand.tap")
+                        Label("Pinch to zoom HD image", systemImage: "arrow.up.left.and.arrow.down.right")
+                        Label("Double tap for quick zoom", systemImage: "hand.tap")
                     }
                     .font(.system(size: 14))
                     .foregroundColor(.white.opacity(0.7))
